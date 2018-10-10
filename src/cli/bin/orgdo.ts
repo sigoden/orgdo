@@ -8,4 +8,5 @@ yargs
     1,
     `Run 'orgdo <subcommand> --help' for more information on a command.`
   )
-  .help().argv;
+  .help()
+  .parse();
