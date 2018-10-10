@@ -30,11 +30,7 @@ export function builder(cmd: yargs.Argv) {
           describe: "How many clocks when take a long break",
           type: "number"
         },
-        "short-break-count": {
-          describe: "How many clocks when take a short break",
-          type: "number"
-        },
-        notify: {
+        "notify": {
           describe: "Enable/Disable notification when clock is finishing",
           type: "boolean"
         }

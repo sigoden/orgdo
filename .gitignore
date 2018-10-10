@@ -6,3 +6,4 @@ package-lock.json
 /dist
 /config.json
 /server.proto
+/db.test.json
