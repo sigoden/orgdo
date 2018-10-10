@@ -10,7 +10,11 @@
 
 - tasks
 
-  id, name, note, tags, priority(critical, high, low, today), time-related(done, started, canceled, start, end, estimates)
+  id, name, desc, tags
+  priority(critical, high, low)
+  time-related(start, rstart, end, rend)
+  misc(est)
+  status(todo, todo-call, todo-outdate, doing, doing-outdate, done, cancel)
 
 - settings
 
@@ -25,15 +29,18 @@
 ## Cli
 
 ```
-orgdo history (@n|clear) # repeate history at @n or clear history
 orgdo list @query # use @query to select tasks, show task list,
-orgdo statistic @query # use @query to select tasks, show statistics of tasks.
-orgdo update @id @changes # update task at @id with @changes
+orgdo edit # update task at @id with @changes
 
 # tomato clock specific command
-orgdo-tomato update @changes # tomato clock settings
-orgdo-tomato start [@id] # start tomato clock for task @id
-orgdo-tomato break # break tomato clock
-orgdo-tomato status # check tomato clock status
-orgdo-tomato statistic @query # show tomato clock statistics
+orgdo clock start [@id] # start clock clock for task @id
+orgdo clock break # break clock clock
+orgdo clock status # check clock clock status
+orgdo clock list @query # show clock clock statistics
+
+# cron specific command
+orgdo cron list
+orgdo cron add
+orgdo cron delete
+orgdo cron edit
 ```

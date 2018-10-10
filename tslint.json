@@ -1,0 +1,21 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended"],
+  "jsRules": {
+    "no-unused-expression": true
+  },
+  "rules": {
+    "no-angle-bracket-type-assertion": false,
+    "no-empty": false,
+    "no-empty-interface": false,
+    "no-namespace": false,
+    "interface-name": [false],
+    "arrow-parens": false,
+    "ordered-imports": false,
+    "object-literal-sort-keys": false,
+    "trailing-comma": false
+  },
+  "linterOptions": {
+    "exclude": ["node_modules"]
+  }
+}
