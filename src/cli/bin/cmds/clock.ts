@@ -4,8 +4,8 @@ import { clock } from "../../";
 
 export const command = "clock";
 export const describe = "Manage tomato clocks";
-export function builder(cli: yargs.Argv) {
-  return cli
+export function builder(cmd: yargs.Argv) {
+  return cmd
     .command("start", "Start clock", {}, (argv: yargs.Arguments) => {})
     .command("break", "Break clock", {}, (argv: yargs.Arguments) => {})
     .command(

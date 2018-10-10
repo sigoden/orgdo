@@ -3,8 +3,8 @@ import { cron } from "../../";
 
 export const command = "cron";
 export const describe = "Manage crons";
-export function builder(cli: yargs.Argv) {
-  return cli
+export function builder(cmd: yargs.Argv) {
+  return cmd
     .command("add", "Add cron", {}, (argv: yargs.Arguments) => {
       cron.add(argv);
     })

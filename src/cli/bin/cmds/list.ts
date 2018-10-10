@@ -1,11 +1,11 @@
 import * as yargs from "yargs";
-import { ListOptions } from "../../Client";
-import { client } from "../../";
+import { ListOptions } from "../../Cli";
+import { cli } from "../../";
 
 export const command = "list";
 export const describe = "List tasks";
-export function builder(cli: yargs.Argv) {
-  return cli
+export function builder(cmd: yargs.Argv) {
+  return cmd
     .option("tags", {
       describe: "Filter based on tags",
       type: "array"
@@ -49,5 +49,5 @@ export function builder(cli: yargs.Argv) {
 }
 
 export function handler(options: ListOptions) {
-  client.list(options);
+  cli.list(options);
 }

@@ -1,11 +1,11 @@
 import * as yargs from "yargs";
-import { UpdateOptions } from "../../Client";
-import { client } from "../..";
+import { UpdateOptions } from "../../Cli";
+import { cli } from "../..";
 
 export const command = "update <id>";
 export const describe = "Update task";
-export function builder(cli: yargs.Argv) {
-  return cli
+export function builder(cmd: yargs.Argv) {
+  return cmd
     .option("tags", {
       describe: "Tags of task",
       type: "string"
@@ -34,5 +34,5 @@ export function builder(cli: yargs.Argv) {
 }
 
 export function handler(options: UpdateOptions) {
-  client.update(options);
+  cli.update(options);
 }

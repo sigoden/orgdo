@@ -1,11 +1,11 @@
 import * as yargs from "yargs";
-import { AddOptions } from "../../Client";
-import { client } from "../../";
+import { AddOptions } from "../../Cli";
+import { cli } from "../../";
 
 export const command = "add <name>";
 export const describe = "Add task";
-export function builder(cli: yargs.Argv) {
-  return cli
+export function builder(cmd: yargs.Argv) {
+  return cmd
     .option("tags", {
       describe: "Tags of task",
       type: "array"
@@ -32,5 +32,5 @@ export function builder(cli: yargs.Argv) {
     });
 }
 export function handler(options: AddOptions) {
-  client.add(options);
+  cli.add(options);
 }
