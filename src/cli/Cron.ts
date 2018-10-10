@@ -4,8 +4,8 @@ import Client from "./Client";
 export default class Cron {
   constructor(client: Client) {}
 
-  add(options) {}
-  update(options) {}
-  remove(options) {}
-  list(options) {}
+  public add(options) {}
+  public update(options) {}
+  public remove(options) {}
+  public list(options) {}
 }

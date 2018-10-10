@@ -5,11 +5,11 @@ import Client from "./Client";
 export default class Clock {
   constructor(client: Client) {}
 
-  start() {}
-  break() {}
-  status() {}
-  set() {}
-  list() {}
+  public start() {}
+  public break() {}
+  public status() {}
+  public set() {}
+  public list() {}
 }
 
 export interface SetOptions extends yargs.Arguments {

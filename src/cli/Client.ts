@@ -3,28 +3,16 @@ import * as yargs from "yargs";
 export default class Client {
   constructor() {}
 
-  list(options: ListOptions) {
-    console.log(options);
-  }
+  public list(options: ListOptions) {}
 
-  add(options: AddOptions) {
-    console.log(options);
-  }
+  public add(options: AddOptions) {}
 
-  update(options: UpdateOptions) {
-    console.log(options);
-  }
-  cancel(options: IdOptions) {
-    console.log(options);
-  }
+  public update(options: UpdateOptions) {}
+  public cancel(options: IdOptions) {}
 
-  done(options: IdOptions) {
-    console.log(options);
-  }
+  public done(options: IdOptions) {}
 
-  start(options: IdOptions) {
-    console.log(options);
-  }
+  public start(options: IdOptions) {}
 }
 
 export interface ListOptions extends yargs.Arguments {
