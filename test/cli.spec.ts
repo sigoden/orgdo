@@ -43,7 +43,7 @@ describe("crud task", () => {
   ],
   "describe": "This is description of task",
   "start": "2099-10-18T02:30:00.000Z",
-  "end": "2099-10-20T00:00:00.000Z"
+  "end": "2099-10-19T16:00:00.000Z"
 }`);
   });
   test("update task", async () => {

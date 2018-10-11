@@ -57,7 +57,8 @@ export function renderSummaryTable(table: TasksSumaryTable): string {
 
 export function renderTasks(tasks: Task[]): string {
   const indent = Math.max(...tasks.map(task => task.id)).toString().length + 2;
-  return os.EOL + tasks.map(task => renderTask(task, indent)).join(os.EOL);
+  const taskstr = tasks.map(task => renderTask(task, indent)).join(os.EOL);
+  return taskstr ? os.EOL + taskstr + os.EOL : "";
 }
 
 export function renderTask(task: Task, indent: number): string {

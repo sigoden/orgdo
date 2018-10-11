@@ -30,14 +30,14 @@ export default class Client {
     const client = new Client();
     try {
       client.db = await low(new FileAsync(options.store));
-      await client.db.defaults(DEFAULT_DB).write();
+      await client.db.defaults(_.cloneDeep(DEFAULT_DB)).write();
     } catch (err) {
       print(err.message);
     }
     return client;
   }
 
-  private db: low.LowdbAsync<any>;
+  public db: low.LowdbAsync<any>;
 
   public async incId(name: string) {
     const id = this.db.get("taskId").value() + 1;
@@ -47,7 +47,7 @@ export default class Client {
 
   public async listTasks(filter: TaskFilter) {
     const tasks = await this.db.get("tasks").value();
-    return tasks
+    return <Task[]> tasks
       .map(task => Task.fromJSON(task))
       .filter(task => filter(task))
       .sort(Task.sort);

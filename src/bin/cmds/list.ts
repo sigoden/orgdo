@@ -1,6 +1,7 @@
 import * as yargs from "yargs";
 import Cli, { ListOptions } from "../../Cli";
 import Client, { print } from "../../Client";
+import * as render from "../../render";
 
 export const command = "list";
 export const describe = "List tasks";
@@ -52,7 +53,16 @@ export function handler(options: ListOptions) {
   Client.init().then(client => {
     new Cli(client)
       .list(options)
-      .then(msg => print(msg))
+      .then(tasks => {
+        let ret = "";
+        if (!options["only-statistic"]) {
+          ret += render.renderTasks(tasks);
+        }
+        if (options["with-statistic"] || options["only-statistic"]) {
+          ret += render.renderTasksStatistic(tasks);
+        }
+        print(ret);
+      })
       .catch(err => print(err.message));
   });
 }

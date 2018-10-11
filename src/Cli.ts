@@ -3,7 +3,6 @@ import * as yargs from "yargs";
 import Client from "./Client";
 import Task, { TaskPriority, TaskStatus } from "./Task";
 import * as taskFilters from "./task-filters";
-import * as render from "./render";
 
 export default class Cli {
   private client: Client;
@@ -44,14 +43,7 @@ export default class Cli {
     }
     const filter = taskFilters.combine(filters);
     const tasks = await this.client.listTasks(filter);
-    let ret = "";
-    if (!options["only-statistic"]) {
-      ret += render.renderTasks(tasks);
-    }
-    if (options["with-statistic"] || options["only-statistic"]) {
-      ret += render.renderTasksStatistic(tasks);
-    }
-    return ret;
+    return tasks;
   }
 
   public async add(options: AddOptions) {

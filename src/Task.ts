@@ -33,10 +33,13 @@ export default class Task {
     if (p1 === p2) {
       return t1.id - t2.id;
     } else {
-      return p1 - p2;
+      return p2 - p1;
     }
   }
   public static fromJSON(data: any) {
+    ["start", "rstart", "end", "rend"].forEach(key => {
+      if (data[key]) { data[key] = new Date(data[key]); }
+    });
     const task: Task = Object.assign(new Task(data.id, data.name), data);
     return task;
   }
@@ -99,10 +102,13 @@ function parseTimestr(timestr: string): Date {
   const createErr = () => new Error("Invalid timestr");
   let date;
   if (RE_TIME.test(timestr)) {
-    if (/^\d{2}/.test(timestr)) {
+    if (/^\d{2}-/.test(timestr)) {
       timestr = "20" + timestr;
     }
     date = new Date(timestr);
+    if (!/\d{2}:\d{2}(:\d{2})?$/.test(timestr)) {
+      date.setHours(0);
+    }
     if (isNaN(<any> date)) {
       throw createErr();
     }
