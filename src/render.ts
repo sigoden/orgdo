@@ -1,20 +1,20 @@
 import Task, { TaskPriority, TaskStatus } from "Task";
 import chalk from "chalk";
-import * as dateformat from "dateformat";
 import * as os from "os";
 
 const COLORS = {
   cancel: chalk.red,
   done: chalk.green,
-  todo: chalk.reset,
+  todo: chalk.white,
+  describe: chalk.gray,
   doing: chalk.yellow,
   high: chalk.bgRed.black,
   low: chalk.bgYellow.black,
-  blod: chalk.bold.reset,
-  italic: chalk.italic.reset,
-  strikethrough: chalk.strikethrough.reset,
+  blod: chalk.bold,
+  italic: chalk.italic,
+  strikethrough: chalk.strikethrough,
   code: chalk.cyan,
-  tag: chalk.whiteBright
+  tag: chalk.magenta
 };
 
 export function renderTasksStatistic(tasks: Task[]): string {
@@ -57,35 +57,30 @@ export function renderSummaryTable(table: TasksSumaryTable): string {
 
 export function renderTasks(tasks: Task[]): string {
   const indent = Math.max(...tasks.map(task => task.id)).toString().length + 2;
-  return tasks.map(task => renderTask(task, indent)).join(os.EOL);
+  return os.EOL + tasks.map(task => renderTask(task, indent)).join(os.EOL);
 }
 
 export function renderTask(task: Task, indent: number): string {
   let ret = "";
-  ret +=
-    renderId(task.id, indent - 2) + ". " + renderName(task.name, task.status);
+  ret += renderId(task.id, indent - 2) + ". " + renderMarkd(task.name);
   if (task.priority !== "medium") {
     ret += " " + renderPriority(task.priority);
   }
-  if (task.start || task.rstart) {
-    if (task.rstart) {
-      ret += " " + renderTimeTag("rstart", task.rstart);
-    } else {
-      ret += " " + renderTimeTag("start", task.start);
-    }
-  }
-  if (task.end || task.rend) {
-    if (task.rend) {
-      ret += " " + renderTimeTag("rend", task.rend);
-    } else {
-      ret += " " + renderTimeTag("end", task.end);
-    }
-  }
-  task.tags.forEach(tag => {
-    ret += " " + COLORS.tag("@" + tag);
-  });
+  ret = COLORS[task.status](ret);
   if (task.describe) {
     ret += os.EOL + renderDescribe(task.describe, indent);
+  }
+  ret = COLORS.describe(ret);
+  const timestr = renderTimes(task);
+  const tagstr = task.tags
+    .map(tag => {
+      return COLORS.tag("@" + tag);
+    })
+    .join(" ");
+  if (timestr || tagstr) {
+    ret += os.EOL;
+    ret += " ".repeat(indent - 1);
+    ret += timestr + " " + tagstr;
   }
   ret += os.EOL;
   return ret;
@@ -104,16 +99,12 @@ function renderDescribe(describe: string, indent: number): string {
     .join(os.EOL);
 }
 
-function renderName(name: string, status: TaskStatus) {
-  return COLORS[status](name);
-}
-
 function renderMarkd(str: string): string {
   return str
     .replace(/`(.*)`/g, COLORS.code("`$1`"))
     .replace(/~(.*)~/g, COLORS.strikethrough("~$1~"))
     .replace(/_(.*)_/g, COLORS.italic("_$1_"))
-    .replace(/\*(.*)\*/g, COLORS.italic("*$1*"));
+    .replace(/\*(.*)\*/g, COLORS.blod("*$1*"));
 }
 
 function renderPriority(priority: TaskPriority): string {
@@ -121,7 +112,26 @@ function renderPriority(priority: TaskPriority): string {
 }
 
 function renderTimeTag(kind: string, time: Date) {
-  return COLORS.tag(`@${kind}(${dateformat(time, "yy-mm-dd HH-MM")})`);
+  return COLORS.tag(`$${kind}(${dateformat(time)})`);
+}
+
+function renderTimes(task: Task) {
+  let ret = "";
+  if (task.start || task.rstart) {
+    if (task.rstart) {
+      ret += " " + renderTimeTag("rstart", task.rstart);
+    } else {
+      ret += " " + renderTimeTag("start", task.start);
+    }
+  }
+  if (task.end || task.rend) {
+    if (task.rend) {
+      ret += " " + renderTimeTag("rend", task.rend);
+    } else {
+      ret += " " + renderTimeTag("end", task.end);
+    }
+  }
+  return ret;
 }
 
 function newTaskSummeryTable(tasks: Task[]) {
@@ -175,5 +185,22 @@ interface TasksSumaryTableColumn {
 }
 
 function paddingRight(str: string, size: number) {
-  return str + " ".repeat(size).slice(size);
+  return (str + " ".repeat(size)).slice(size);
+}
+
+function prependZero(str: string, size: number) {
+  return ("0".repeat(size) + str).slice(-1 * size);
+}
+
+function dateformat(date: Date): string {
+  const year = ("" + date.getFullYear()).slice(-2);
+  const month = prependZero("" + (date.getMonth() + 1), 2);
+  const day = prependZero("" + date.getDate(), 2);
+  const hour = prependZero("" + date.getHours(), 2);
+  const minute = prependZero("" + date.getMinutes(), 2);
+  const ymd = `${year}-${month}-${day}`;
+  if (hour === "00" && minute === "00") {
+    return ymd;
+  }
+  return ymd + ` ${hour}:${minute}`;
 }
