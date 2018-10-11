@@ -2,10 +2,7 @@
   "name": "orgdo-cli",
   "version": "1.0.0",
   "description": "> cli tools for orgdo",
-  "bin": {
-    "orgdo": "dist/cli/bin/orgdo.js",
-    "orgdod": "dist/server/index.js"
-  },
+  "bin": "dist/bin/orgdo.js",
   "scripts": {
     "lint": "tslint -p tsconfig.json --fix",
     "build": "tsc",
