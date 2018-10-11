@@ -7,3 +7,6 @@ package-lock.json
 /config.json
 /server.proto
 /db.test.json
+/test/.orgdo.test.json
+/.orgdo.json
+/.vscode

@@ -1,6 +1,6 @@
 import * as yargs from "yargs";
-import { ListOptions } from "../../Cli";
-import { cli } from "../../";
+import Cli, { ListOptions } from "../../Cli";
+import Client, { print } from "../../Client";
 
 export const command = "list";
 export const describe = "List tasks";
@@ -19,7 +19,7 @@ export function builder(cmd: yargs.Argv) {
       choices: ["todo", "doing", "done", "cancel"]
     })
     .option("name", {
-      describe: "Filter based on name glob",
+      describe: "Filter based on name regexp",
       type: "string"
     })
     .option("start", {
@@ -49,5 +49,10 @@ export function builder(cmd: yargs.Argv) {
 }
 
 export function handler(options: ListOptions) {
-  cli.list(options);
+  Client.init().then(client => {
+    new Cli(client)
+      .list(options)
+      .then(msg => print(msg))
+      .catch(err => print(err.message));
+  });
 }

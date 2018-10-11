@@ -7,6 +7,7 @@
     "lint": "tslint -p tsconfig.json --fix",
     "build": "tsc",
     "build:prod": "tsc -p tsconfig.prod.json",
+    "test": "jest",
     "clean": "rimraf dist"
   },
   "keywords": [],
@@ -14,12 +15,20 @@
   "license": "MIT",
   "dependencies": {
     "@types/lowdb": "^1.0.6",
+    "chalk": "^2.4.1",
+    "dateformat": "^3.0.3",
+    "lodash": "^4.17.11",
     "lowdb": "^1.0.0",
+    "timestring": "^5.0.1",
     "yargs": "^12.0.2"
   },
   "devDependencies": {
+    "@types/jest": "^23.3.5",
     "@types/node": "^10.11.6",
     "@types/yargs": "^12.0.1",
+    "jest": "^23.6.0",
+    "rimraf": "^2.6.2",
+    "ts-jest": "^23.10.4",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "typescript": "^3.1.2"

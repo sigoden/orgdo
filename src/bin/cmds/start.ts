@@ -1,6 +1,6 @@
 import * as yargs from "yargs";
-import { IdOptions } from "../../Cli";
-import { cli } from "../../";
+import Cli, { IdOptions } from "../../Cli";
+import Client, { print } from "../../Client";
 
 export const command = "start <id>";
 export const describe = "Start task";
@@ -8,5 +8,7 @@ export function builder(cmd: yargs.Argv) {
   return cmd.positional("id", { describe: "Id of task", type: "number" });
 }
 export function handler(options: IdOptions) {
-  cli.start(options);
+  Client.init().then(client => {
+    new Cli(client).start(options).catch(err => print(err.message));
+  });
 }

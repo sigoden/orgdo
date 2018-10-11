@@ -1,7 +1,5 @@
 import * as yargs from "yargs";
 
-import { clock } from "../../";
-
 export const command = "clock";
 export const describe = "Manage tomato clocks";
 export function builder(cmd: yargs.Argv) {

@@ -1,12 +1,16 @@
 import * as yargs from "yargs";
-import { cron } from "../../";
+
+import Client from "../../Client";
+import Cron from "../../Cron";
 
 export const command = "cron";
 export const describe = "Manage crons";
 export function builder(cmd: yargs.Argv) {
   return cmd
     .command("add", "Add cron", {}, (argv: yargs.Arguments) => {
-      cron.add(argv);
+      Client.init().then(client => {
+        new Cron(client).add(argv);
+      });
     })
     .command("update", "Update cron", {}, (argv: yargs.Arguments) => {})
     .command("rm", "Remove cron", {}, (argv: yargs.Arguments) => {})

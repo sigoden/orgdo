@@ -1,6 +1,6 @@
 import * as yargs from "yargs";
-import { AddOptions } from "../../Cli";
-import { cli } from "../../";
+import Cli, { AddOptions } from "../../Cli";
+import Client, { print } from "../../Client";
 
 export const command = "add <name>";
 export const describe = "Add task";
@@ -20,11 +20,11 @@ export function builder(cmd: yargs.Argv) {
     })
     .option("start", {
       describe: "Plan start datetime of task",
-      type: "number"
+      type: "string"
     })
     .option("end", {
       describe: "Plan finish datetime of task",
-      type: "number"
+      type: "string"
     })
     .positional("name", {
       describe: "Name of task",
@@ -32,5 +32,7 @@ export function builder(cmd: yargs.Argv) {
     });
 }
 export function handler(options: AddOptions) {
-  cli.add(options);
+  Client.init().then(client => {
+    new Cli(client).add(options).catch(err => print(err.message));
+  });
 }
