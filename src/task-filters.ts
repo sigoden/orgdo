@@ -5,13 +5,13 @@ const DAY_MS = 86400000;
 
 import Task from "./Task";
 
-type TimeFilter = (date: Date) => boolean;
-type TagsFilter = (tags: string[]) => boolean;
-type RegexpFilter = (value: string) => boolean;
+type DateFilter = (date: any) => boolean;
+type StringArrayFilter = (tags: string[]) => boolean;
+type ValueFilter = (value: string) => boolean;
 
 export type TaskFilter = (task: Task) => boolean;
 
-export function newTimerFilter(daystr: string): TimeFilter {
+export function newTimerFilter(daystr: string): DateFilter {
   daystr = _.trim(daystr);
   if (!RE_RDAYS.test(daystr)) {
     throw Error("Invalid daystr");
@@ -45,7 +45,7 @@ export function newTimerFilter(daystr: string): TimeFilter {
       };
   }
 }
-export function newTagsFilter(tagsGroup: string[]): TagsFilter {
+export function newTagsFilter(tagsGroup: string[]): StringArrayFilter {
   return (tags: string[]) => {
     for (const tagstr of tagsGroup) {
       if (!tagstr.split(",").some(tag => tags.indexOf(tag) > -1)) {
@@ -56,8 +56,20 @@ export function newTagsFilter(tagsGroup: string[]): TagsFilter {
   };
 }
 
-export function newRegexpFilter(regexp: string): RegexpFilter {
+export function newRegexpFilter(regexp: string): ValueFilter {
   return (value: string) => new RegExp(regexp).test(value);
+}
+
+export function newEqualAnyFilter(matches: string | string[]): ValueFilter {
+  return (value: string) => {
+    let matchesArr: string[];
+    if (typeof matches === "string") {
+      matchesArr = [matches];
+    } else {
+      matchesArr = matches;
+    }
+    return Boolean(matchesArr.find(v => v === value));
+  };
 }
 
 export function combine(filters: TaskFilter[]): TaskFilter {

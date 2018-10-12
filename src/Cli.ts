@@ -1,5 +1,3 @@
-import * as yargs from "yargs";
-
 import Client from "./Client";
 import Task, { TaskPriority, TaskStatus } from "./Task";
 import * as taskFilters from "./task-filters";
@@ -21,10 +19,14 @@ export default class Cli {
       });
     }
     if (options.priority) {
-      filters.push(task => task.priority === options.priority);
+      filters.push(task =>
+        taskFilters.newEqualAnyFilter(options.priority)(task.priority)
+      );
     }
     if (options.status) {
-      filters.push(task => task.status === options.status);
+      filters.push(task =>
+        taskFilters.newEqualAnyFilter(options.status)(task.status)
+      );
     }
     ["start", "started", "complete", "completed"].map(key => {
       if (options[key]) {
@@ -111,8 +113,8 @@ export default class Cli {
 
 export interface ListOptions {
   tags?: string[];
-  priority?: TaskPriority;
-  status?: TaskStatus;
+  priority?: TaskPriority | TaskPriority[];
+  status?: TaskStatus | TaskStatus[];
   name?: string;
   start?: string;
   started?: string;
