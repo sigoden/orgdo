@@ -24,8 +24,9 @@ export interface Options {
 
 import Task from "./Task";
 import { TaskFilter } from "./task-filters";
+import { EventEmitter } from "events";
 
-export default class Client {
+export default class Client extends EventEmitter {
   public static async init(options: Options = { store: ".orgdo.json" }) {
     const client = new Client();
     try {
@@ -38,6 +39,10 @@ export default class Client {
   }
 
   public db: low.LowdbAsync<any>;
+
+  constructor() {
+    super();
+  }
 
   public async incId(name: string) {
     const id = this.db.get("taskId").value() + 1;
