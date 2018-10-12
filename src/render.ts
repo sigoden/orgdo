@@ -118,18 +118,18 @@ function renderTimeTag(kind: string, time: Date) {
 
 function renderTimes(task: Task) {
   let ret = "";
-  if (task.start || task.rstart) {
-    if (task.rstart) {
-      ret += " " + renderTimeTag("rstart", task.rstart);
+  if (task.start || task.started) {
+    if (task.started) {
+      ret += " " + renderTimeTag("started", task.started);
     } else {
       ret += " " + renderTimeTag("start", task.start);
     }
   }
-  if (task.end || task.rend) {
-    if (task.rend) {
-      ret += " " + renderTimeTag("rend", task.rend);
+  if (task.complete || task.completed) {
+    if (task.completed) {
+      ret += " " + renderTimeTag("completed", task.completed);
     } else {
-      ret += " " + renderTimeTag("end", task.end);
+      ret += " " + renderTimeTag("complete", task.complete);
     }
   }
   return ret;

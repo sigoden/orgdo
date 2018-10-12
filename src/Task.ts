@@ -12,7 +12,7 @@ interface UpdateData {
   describe?: string;
   priority?: TaskPriority;
   start?: string;
-  end?: string;
+  complete?: string;
 }
 
 export type TaskPriority = "high" | "medium" | "low";
@@ -37,7 +37,7 @@ export default class Task {
     }
   }
   public static fromJSON(data: any) {
-    ["start", "rstart", "end", "rend"].forEach(key => {
+    ["start", "started", "complete", "completed"].forEach(key => {
       if (data[key]) { data[key] = new Date(data[key]); }
     });
     const task: Task = Object.assign(new Task(data.id, data.name), data);
@@ -50,9 +50,9 @@ export default class Task {
   public status: TaskStatus;
   public describe?: string;
   public start?: Date;
-  public rstart?: Date;
-  public end?: Date;
-  public rend?: Date;
+  public started?: Date;
+  public complete?: Date;
+  public completed?: Date;
   constructor(id: number, name: string) {
     this.id = id;
     this.name = _.trim(_.replace(name, os.EOL, " "));
@@ -79,8 +79,8 @@ export default class Task {
     if (data.start) {
       this.start = parseTimestr(data.start);
     }
-    if (data.end) {
-      this.end = parseTimestr(data.end);
+    if (data.complete) {
+      this.complete = parseTimestr(data.complete);
     }
     return this;
   }

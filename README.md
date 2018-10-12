@@ -12,7 +12,7 @@
 
   id, name, desc, tags
   priority(critical, high, low)
-  time-related(start, rstart, end, rend)
+  time-related(start, started, complete, completed)
   misc(est)
   status(todo, todo-call, todo-outdate, doing, doing-outdate, done, cancel)
 

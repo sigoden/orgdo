@@ -9,9 +9,9 @@ orgdo list --priority low
 orgdo list --status done,cancel
 orgdo list --name email*
 orgdo list --start 3
-orgdo list --rstart >-3
-orgdo list --end >3
-orgdo list --rend -3
+orgdo list --started >-3
+orgdo list --complete >3
+orgdo list --completed -3
 orgdo list --with-statistic
 orgdo list --only-statistic
 ```
@@ -19,7 +19,7 @@ orgdo list --only-statistic
 ```
 orgdo edit --tags myproject,backend name
 orgdo edit --start 3 name
-orgdo edit --end 3 name
+orgdo edit --complete 3 name
 orgdo edit --desc 'you can search google' name
 orgdo edit --priority high name
 ```

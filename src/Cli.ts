@@ -26,7 +26,7 @@ export default class Cli {
     if (options.status) {
       filters.push(task => task.status === options.status);
     }
-    ["start", "rstart", "end", "rend"].map(key => {
+    ["start", "started", "complete", "completed"].map(key => {
       if (options[key]) {
         filters.push(task => {
           if (!task[key]) {
@@ -47,7 +47,7 @@ export default class Cli {
   }
 
   public async add(options: AddOptions) {
-    const { tags, describe, priority, start, end, name } = options;
+    const { tags, describe, priority, start, complete, name } = options;
     const id = await this.client.incId("taskId");
     const task = Task.fromRaw({
       id,
@@ -55,7 +55,7 @@ export default class Cli {
       describe,
       priority,
       start,
-      end,
+      complete,
       name
     });
     await this.client.addTask(task);
@@ -78,7 +78,7 @@ export default class Cli {
   public async cancel(options: IdOptions) {
     const task = await this.client.getTask(options.id);
     task.updateStatus("cancel");
-    task.rend = new Date();
+    task.completed = new Date();
     await this.client.updateTask(task);
     return task;
   }
@@ -86,7 +86,7 @@ export default class Cli {
   public async done(options: IdOptions) {
     const task = await this.client.getTask(options.id);
     task.updateStatus("done");
-    task.rend = new Date();
+    task.completed = new Date();
     await this.client.updateTask(task);
     return task;
   }
@@ -99,7 +99,7 @@ export default class Cli {
   public async start(options: IdOptions) {
     const task = await this.client.getTask(options.id);
     task.updateStatus("doing");
-    task.rstart = new Date();
+    task.started = new Date();
     await this.client.updateTask(task);
     return task;
   }
@@ -115,9 +115,9 @@ export interface ListOptions {
   status?: TaskStatus;
   name?: string;
   start?: string;
-  rstart?: string;
-  end?: string;
-  rend?: string;
+  started?: string;
+  complete?: string;
+  completed?: string;
   "with-statistic"?: string;
   "only-statistic"?: string;
 }
@@ -127,7 +127,7 @@ export interface AddOptions {
   describe?: string;
   priority?: TaskPriority;
   start?: string;
-  end?: string;
+  complete?: string;
   name: string;
 }
 
@@ -142,6 +142,6 @@ export interface UpdateOptions {
   describe?: string;
   priority?: TaskPriority;
   start?: string;
-  end?: string;
+  complete?: string;
   name?: string;
 }

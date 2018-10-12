@@ -29,7 +29,7 @@ describe("crud task", () => {
       name: "This is a task",
       priority: "high",
       start: "99-10-18 10:30",
-      end: "99-10-20"
+      complete: "99-10-20"
     });
     expect(task).toBeInstanceOf(Task);
     expect(JSON.stringify(task, null, 2)).toBe(`{
@@ -43,7 +43,7 @@ describe("crud task", () => {
   ],
   "describe": "This is description of task",
   "start": "2099-10-18T02:30:00.000Z",
-  "end": "2099-10-19T16:00:00.000Z"
+  "complete": "2099-10-19T16:00:00.000Z"
 }`);
   });
   test("update task", async () => {
@@ -54,7 +54,7 @@ describe("crud task", () => {
       "name": "This is a task, updated",
       "priority": "low",
       "start": "1w 3",
-      "end": "2w"
+      "complete": "2w"
     });
     expect(task.tags).toEqual(["project", "easy"]);
   });
@@ -63,14 +63,14 @@ describe("crud task", () => {
       id: 1
     });
     expect(task.status).toEqual("doing");
-    expect(task.rstart).toBeDefined();
+    expect(task.started).toBeDefined();
   });
   test("done task", async () => {
     const task = await cli.done({
       id: 1
     });
     expect(task.status).toEqual("done");
-    expect(task.rend).toBeDefined();
+    expect(task.completed).toBeDefined();
   });
   test("cancel task", async () => {
     const task = await cli.add({
@@ -110,7 +110,7 @@ describe("list task", () => {
       describe: "This is description of task",
       priority: "high",
       start: "2099-10-18 10:30",
-      end: "2099-10-20"
+      complete: "2099-10-20"
     });
     await cli.add({
       name: "Task with multiple describe",

@@ -19,11 +19,11 @@ export function builder(cmd: yargs.Argv) {
       type: "string"
     })
     .option("start", {
-      describe: "Plan start datetime of task",
+      describe: "When to start task",
       type: "string"
     })
-    .option("end", {
-      describe: "Plan finish datetime of task",
+    .option("complete", {
+      describe: "When to complete task",
       type: "string"
     })
     .positional("name", {

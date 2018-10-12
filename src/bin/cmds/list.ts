@@ -24,19 +24,19 @@ export function builder(cmd: yargs.Argv) {
       type: "string"
     })
     .option("start", {
-      describe: "Filter base on plan start datetime of task",
+      describe: "Filter base on start time of task",
       type: "string"
     })
-    .option("rstart", {
-      describe: "Filter base on real start datetime of task",
+    .option("started", {
+      describe: "Filter base on started time of task",
       type: "string"
     })
-    .option("end", {
-      describe: "Filter base on plan end datetime of task",
+    .option("complete", {
+      describe: "Filter base on complete time of task",
       type: "string"
     })
-    .option("rend", {
-      describe: "Filter base on real end datetime of task",
+    .option("completed", {
+      describe: "Filter base on completed time of task",
       type: "string"
     })
     .option("with-statistic", {
