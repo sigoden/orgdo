@@ -24,7 +24,7 @@ export function builder(cmd: yargs.Argv) {
     })
     .option("priority", {
       describe: "Priority of task",
-      type: "string"
+      choices: ["high", "medium", "low"]
     })
     .option("start", {
       describe: "When to start task",
