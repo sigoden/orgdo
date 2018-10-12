@@ -7,6 +7,10 @@ export const command = "list";
 export const describe = "List tasks";
 export function builder(cmd: yargs.Argv) {
   return cmd
+    .option("all", {
+      describe: "List all the tasks",
+      type: "boolean"
+    })
     .option("tags", {
       describe: "Filter based on tags",
       type: "array"
@@ -51,6 +55,13 @@ export function builder(cmd: yargs.Argv) {
 
 export function handler(options: ListOptions) {
   Client.init().then(client => {
+    if (Object.keys(options).length === 2) {
+      options = {
+        status: ["todo", "doing"],
+        start: "1",
+        complete: "1"
+      };
+    }
     new Cli(client)
       .list(options)
       .then(tasks => {
