@@ -23,7 +23,7 @@ export function renderTasksStatistic(tasks: Task[]): string {
     return "";
   }
   const table = newTaskSummeryTable(tasks);
-  return renderSummaryTable(table);
+  return renderSummaryTable(table) + os.EOL;
 }
 
 function renderSummaryTable(table: TasksSumaryTable): string {
