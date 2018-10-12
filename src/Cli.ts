@@ -30,7 +30,7 @@ export default class Cli {
       if (options[key]) {
         filters.push(task => {
           if (!task[key]) {
-            return true;
+            return /ed$/.test(key) ? false : true;
           }
           return taskFilters.newTimerFilter(options[key])(task[key]);
         });

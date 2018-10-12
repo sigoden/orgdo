@@ -1,7 +1,6 @@
 import Client from "../src/Client";
 import Cli from "../src/Cli";
 import Task from "../src/Task";
-import * as os from "os";
 
 import * as path from "path";
 import * as fs from "fs";
@@ -9,8 +8,9 @@ import * as fs from "fs";
 let client: Client;
 let cli: Cli;
 
+const store = path.resolve(__dirname, ".orgdo.test.json");
+
 async function prepare() {
-  const store = path.resolve(__dirname, ".orgdo.test.json");
   try {
     fs.unlinkSync(store);
   } catch (err) {}
@@ -19,6 +19,12 @@ async function prepare() {
   });
   cli = new Cli(client);
 }
+
+afterAll(() => {
+  try {
+    fs.unlinkSync(store);
+  } catch (err) {}
+});
 
 describe("crud task", () => {
   beforeAll(prepare);
@@ -99,31 +105,133 @@ describe("crud task", () => {
 });
 
 describe("list task", () => {
-  beforeAll(prepare);
-  test("add batch tasks", async () => {
-    await cli.add({
-      name: "Task minial"
-    });
-    await cli.add({
-      name: "Task full",
-      tags: ["project", "blog"],
-      describe: "This is description of task",
-      priority: "high",
-      start: "2099-10-18 10:30",
-      complete: "2099-10-20"
-    });
-    await cli.add({
-      name: "Task with multiple describe",
-      priority: "low",
-      describe:
-        "This is description of task" + os.EOL + "Another line of description"
-    });
-    await cli.add({
-      name: "Task with marked describe",
-      describe: "This is *marked* _description_ ~of~ `task`"
-    });
+  beforeAll(async () => {
+    await prepare();
+    const tasks = require("./fixtures/tasks.json");
+    const state = client.db.getState();
+    client.db.setState({ ...state, tasks });
   });
-  test("list tasks", async () => {
-    const ret = await cli.list({});
+  test("filter by tags (&&)", async () => {
+    const tasks = await cli.list({ tags: ["project", "owner"] });
+    expect(tasks.map(t => t.id)).toEqual([2]);
+  });
+  test("filter by tags (||)", async () => {
+    const tasks = await cli.list({ tags: ["project,blog"] });
+    expect(tasks.map(t => t.id)).toEqual([1, 2, 11]);
+  });
+  test("filter by priority", async () => {
+    const tasks = await cli.list({ priority: "low" });
+    expect(tasks.map(t => t.id)).toEqual([5, 11]);
+  });
+  test("filter by status", async () => {
+    const tasks = await cli.list({ status: "cancel" });
+    expect(tasks.map(t => t.id)).toEqual([9]);
+  });
+  test("filter by name", async () => {
+    const tasks = await cli.list({ name: "description" });
+    expect(tasks.map(t => t.id)).toEqual([1]);
   });
 });
+
+describe("list task by times", () => {
+  beforeAll(async () => {
+    await prepare();
+    const tasks = [
+      {
+        id: 1,
+        name: "Task",
+        start: dayOffset(2),
+        status: "todo"
+      },
+      {
+        id: 2,
+        name: "Task",
+        start: dayOffset(2),
+        complete: dayOffset(3),
+        started: dayOffset(2),
+        status: "doing"
+      },
+      {
+        id: 3,
+        name: "Task",
+        complete: dayOffset(2),
+        status: "todo"
+      },
+      {
+        id: 4,
+        name: "Task",
+        start: dayOffset(4),
+        complete: dayOffset(5),
+        status: "todo"
+      },
+      {
+        id: 5,
+        name: "Task",
+        start: dayOffset(-2),
+        complete: dayOffset(-1),
+        status: "todo"
+      },
+      {
+        id: 6,
+        name: "Task",
+        start: dayOffset(-4),
+        status: "todo"
+      },
+      {
+        id: 7,
+        name: "Task",
+        started: dayOffset(2),
+        status: "doing"
+      },
+      {
+        id: 8,
+        name: "Task",
+        started: dayOffset(-4),
+        completed: dayOffset(-2),
+        status: "done"
+      },
+      {
+        id: 9,
+        name: "Task",
+        completed: dayOffset(-2),
+        status: "cancel"
+      }
+    ].map(task => Object.assign({ priority: "medium", tags: [] }, task));
+    const state = client.db.getState();
+    client.db.setState({ ...state, tasks });
+  });
+  test("filter by start", async () => {
+    const tasks = await cli.list({ start: "3" });
+    expect(tasks.map(t => t.id)).toEqual([1, 2, 3, 7, 8, 9]);
+  });
+  test("filter by start (>n)", async () => {
+    const tasks = await cli.list({ start: ">3" });
+    expect(tasks.map(t => t.id)).toEqual([3, 4, 7, 8, 9]);
+  });
+  test("filter by start (-n)", async () => {
+    const tasks = await cli.list({ start: "-3" });
+    expect(tasks.map(t => t.id)).toEqual([3, 5, 7, 8, 9]);
+  });
+  test("filter by start (<n)", async () => {
+    const tasks = await cli.list({ start: "<3" });
+    expect(tasks.map(t => t.id)).toEqual([3, 6, 7, 8, 9]);
+  });
+  test("filter by started", async () => {
+    const tasks = await cli.list({ started: "3" });
+    expect(tasks.map(t => t.id)).toEqual([2, 7]);
+  });
+  test("filter by complete", async () => {
+    const tasks = await cli.list({ complete: "-3" });
+    expect(tasks.map(t => t.id)).toEqual([1, 5, 6, 7, 8, 9]);
+  });
+  test("filter by completed", async () => {
+    const tasks = await cli.list({ completed: "-3" });
+    expect(tasks.map(t => t.id)).toEqual([8, 9]);
+  });
+});
+
+function dayOffset(days: number) {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return date;
+}

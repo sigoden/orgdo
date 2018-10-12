@@ -1,4 +1,4 @@
-import Task, { TaskPriority, TaskStatus } from "Task";
+import Task from "Task";
 import chalk from "chalk";
 import * as os from "os";
 
@@ -9,7 +9,8 @@ const COLORS = {
   describe: chalk.gray,
   doing: chalk.yellow,
   high: chalk.bgRed.black,
-  low: chalk.bgYellow.black,
+  low: chalk.bgBlue.black,
+  medium: chalk.bgGreen.black,
   blod: chalk.bold,
   italic: chalk.italic,
   strikethrough: chalk.strikethrough,
@@ -25,7 +26,7 @@ export function renderTasksStatistic(tasks: Task[]): string {
   return renderSummaryTable(table);
 }
 
-export function renderSummaryTable(table: TasksSumaryTable): string {
+function renderSummaryTable(table: TasksSumaryTable): string {
   const columns = Object.keys(table.all);
   const arr = [];
   let titleLine = "";
@@ -56,48 +57,43 @@ export function renderSummaryTable(table: TasksSumaryTable): string {
 }
 
 export function renderTasks(tasks: Task[]): string {
-  const indent = Math.max(...tasks.map(task => task.id)).toString().length + 2;
-  const taskstr = tasks.map(task => renderTask(task, indent)).join(os.EOL);
+  const taskstr = tasks.map(task => renderTask(task)).join(os.EOL);
   return taskstr ? os.EOL + taskstr + os.EOL : "";
 }
 
-export function renderTask(task: Task, indent: number): string {
+function renderTask(task: Task): string {
   let ret = "";
-  ret += renderId(task.id, indent - 2) + ". " + renderMarkd(task.name);
-  if (task.priority !== "medium") {
-    ret += " " + renderPriority(task.priority);
-  }
-  ret = COLORS[task.status](ret);
+  const indent = "   ";
+  ret += renderSymbol(task) + indent.slice(0, -1);
+  ret += COLORS[task.status](renderMarkd(task.name));
+  ret += " " + renderId(task);
   if (task.describe) {
-    ret += os.EOL + renderDescribe(task.describe, indent);
-  }
-  ret = COLORS.describe(ret);
-  const timestr = renderTimes(task);
-  const tagstr = task.tags
-    .map(tag => {
-      return COLORS.tag("@" + tag);
-    })
-    .join(" ");
-  if (timestr || tagstr) {
     ret += os.EOL;
-    ret += " ".repeat(indent - 1);
-    ret += timestr + " " + tagstr;
+    ret += COLORS.describe(
+      renderMarkd(task.describe)
+        .split(os.EOL)
+        .map(l => indent + l)
+        .join(os.EOL)
+    );
+  }
+  // ret += COLORS.tag("#" + task.id);
+  const timestr = renderTimes(task);
+  const tagstr = renderTags(task);
+  if (timestr || tagstr) {
+    ret += os.EOL + indent;
+    if (timestr) {
+      ret += timestr;
+    }
+    if (tagstr) {
+      ret += (timestr ? " " : "") + tagstr;
+    }
   }
   ret += os.EOL;
   return ret;
 }
 
-function renderId(id: number, indent: number): string {
-  return (" ".repeat(indent) + String(id)).slice(-1 * indent);
-}
-
-function renderDescribe(describe: string, indent: number): string {
-  const indentStr = " ".repeat(indent);
-  return describe
-    .split(os.EOL)
-    .map(l => indentStr + l)
-    .map(renderMarkd)
-    .join(os.EOL);
+function renderId(task: Task): string {
+  return COLORS[task.priority]("#" + task.id);
 }
 
 function renderMarkd(str: string): string {
@@ -108,31 +104,54 @@ function renderMarkd(str: string): string {
     .replace(/\*(.*)\*/g, COLORS.blod("*$1*"));
 }
 
-function renderPriority(priority: TaskPriority): string {
-  return COLORS[priority](priority);
+function renderSymbol(task: Task): string {
+  let symbol = "";
+  switch (task.status) {
+    case "todo":
+      symbol = "☐";
+      break;
+    case "done":
+      symbol = "✔";
+      break;
+    case "cancel":
+      symbol = "✘";
+      break;
+    case "doing":
+      symbol = "❍";
+      break;
+  }
+  return COLORS[task.status](symbol);
 }
 
 function renderTimeTag(kind: string, time: Date) {
-  return COLORS.tag(`$${kind}(${dateformat(time)})`);
+  return COLORS.tag(`$${kind}(${shortTimeStr(dateformat(time))})`);
 }
 
 function renderTimes(task: Task) {
-  let ret = "";
+  const times = [];
   if (task.start || task.started) {
     if (task.started) {
-      ret += " " + renderTimeTag("started", task.started);
+      times.push(renderTimeTag("started", task.started));
     } else {
-      ret += " " + renderTimeTag("start", task.start);
+      times.push(renderTimeTag("start", task.start));
     }
   }
   if (task.complete || task.completed) {
     if (task.completed) {
-      ret += " " + renderTimeTag("completed", task.completed);
+      times.push(renderTimeTag("completed", task.completed));
     } else {
-      ret += " " + renderTimeTag("complete", task.complete);
+      times.push(renderTimeTag("complete", task.complete));
     }
   }
-  return ret;
+  return times.join(" ");
+}
+
+function renderTags(task: Task) {
+  return task.tags
+    .map(tag => {
+      return COLORS.tag("@" + tag);
+    })
+    .join(" ");
 }
 
 function newTaskSummeryTable(tasks: Task[]) {
@@ -150,10 +169,12 @@ function newTaskSummeryTable(tasks: Task[]) {
   }
   Object.keys(table).forEach(key => {
     const row = table[key];
+    const finishedNum = row.cancel + row.done;
     const unfinishedNum = row.todo + row.doing;
-    const allNum = unfinishedNum + row.cancel + row.done;
+    const allNum = unfinishedNum + finishedNum;
     row.all = allNum;
-    row.percent = Math.round((100 * unfinishedNum) / allNum);
+    const percent = Math.round((100 * finishedNum) / allNum);
+    row.percent = percent === 0 ? "0" : "" + percent + "%";
   });
   return table;
 }
@@ -166,7 +187,7 @@ function newTaskSummeryTableRow(name: string): TasksSumaryTableColumn {
     done: 0,
     cancel: 0,
     all: 0,
-    percent: 0
+    percent: "0"
   };
 }
 
@@ -182,11 +203,11 @@ interface TasksSumaryTableColumn {
   done: number;
   cancel: number;
   all: number;
-  percent: number;
+  percent: string;
 }
 
 function paddingRight(str: string, size: number) {
-  return (str + " ".repeat(size)).slice(size);
+  return (str + " ".repeat(size)).slice(0, size);
 }
 
 function prependZero(str: string, size: number) {
@@ -194,7 +215,7 @@ function prependZero(str: string, size: number) {
 }
 
 function dateformat(date: Date): string {
-  const year = ("" + date.getFullYear()).slice(-2);
+  const year = "" + date.getFullYear();
   const month = prependZero("" + (date.getMonth() + 1), 2);
   const day = prependZero("" + date.getDate(), 2);
   const hour = prependZero("" + date.getHours(), 2);
@@ -204,4 +225,15 @@ function dateformat(date: Date): string {
     return ymd;
   }
   return ymd + ` ${hour}:${minute}`;
+}
+
+function shortTimeStr(timestr: string): string {
+  const nowstr = dateformat(new Date()).slice(9);
+  let i = 0;
+  for (; i < nowstr.length; i++) {
+    if (nowstr[i] !== timestr[i]) {
+      break;
+    }
+  }
+  return timestr.slice(i + 1);
 }

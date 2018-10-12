@@ -1,0 +1,41 @@
+
+[37m☐[39m  [37mTask may have description[39m [41m[30m#1[39m[49m
+[90m   Descripe can be multipeline text with markdown-like fashion.[39m
+[90m   Bold: Use asterisks for [1m*bold*[22m[39m
+[90m   Italic: Use underscores for [3m_italic_[23m[39m
+[90m   Strikethrough: Use tildes for [9m~strikethrough~[29m[39m
+[90m   Code:  Use backticks for [36m`code`[90m[39m
+   [35m@project[39m
+
+[37m☐[39m  [37mTask have tags, you can use tag to mark project or owner[39m [41m[30m#2[39m[49m
+   [35m@project[39m [35m@owner[39m
+
+[37m☐[39m  [37mTask have priority, supports low, medium, high. The default is medium[39m [42m[30m#3[39m[49m
+
+[37m☐[39m  [37mTask have priority, supports low, medium, high[39m [41m[30m#4[39m[49m
+[90m   The higher prioriy, the farther forward[39m
+
+[37m☐[39m  [37mTask have priority, supports low, medium, high[39m [44m[30m#5[39m[49m
+[90m   The lower prioriy, the farther backward[39m
+
+[37m☐[39m  [37mTask have kinds of status, included todo, doing, done, cancel[39m [42m[30m#6[39m[49m
+[90m   todo means task have not started[39m
+
+[33m❍[39m  [33mTask have kinds of status, included todo, doing, done, cancel[39m [42m[30m#7[39m[49m
+[90m   doing means task have started but have not completed[39m
+   [35m$started(17-09-10 16:30)[39m
+
+[32m✔[39m  [32mTask have kinds of status, included todo, doing, done, cancel[39m [42m[30m#8[39m[49m
+[90m   done meas task have completed[39m
+   [35m$started(17-09-10 16:30)[39m [35m$completed(17-09-13 00:32)[39m
+
+[31m✘[39m  [31mTask have kinds of status, included todo, doing, done, cancel[39m [42m[30m#9[39m[49m
+[90m   cancel meas task have canceled[39m
+   [35m$completed(17-09-15 00:32)[39m
+
+[37m☐[39m  [37mAdd task with expired start and complete time[39m [42m[30m#10[39m[49m
+   [35m$start(28-09-15 00:30)[39m [35m$complete(28-09-16 00:30)[39m
+
+[32m✔[39m  [32mThe task have all properties[39m [44m[30m#11[39m[49m
+   [35m$started(17-09-15 02:30)[39m [35m$completed(17-09-16 00:30)[39m [35m@project[39m [35m@blog[39m
+

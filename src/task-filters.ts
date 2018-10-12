@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 
-const RE_RDAYS = /^>?-?\d+$/;
+const RE_RDAYS = /^([\-><])?\d+$/;
 const DAY_MS = 86400000;
 
 import Task from "./Task";
@@ -16,34 +16,33 @@ export function newTimerFilter(daystr: string): TimeFilter {
   if (!RE_RDAYS.test(daystr)) {
     throw Error("Invalid daystr");
   }
-  if (daystr[0] === ">") {
-    if (daystr[1] === "-") {
+  const mark = daystr[0];
+  switch (mark) {
+    case ">": // n days later
       return date => {
         const time = date.getTime();
         const now = Date.now();
-        return (
-          time > now - DAY_MS * parseInt(daystr.slice(2), 10) && time <= now
-        );
+        return time > now + DAY_MS * parseFloat(daystr.slice(1));
       };
-    } else {
+    case "-": // 3 days ago
       return date => {
         const time = date.getTime();
         const now = Date.now();
-        return time > now + DAY_MS * parseInt(daystr.slice(1), 10);
+        return time > now - DAY_MS * parseFloat(daystr.slice(1)) && time <= now;
       };
-    }
-  } else if (daystr[0] === "-") {
-    return date => {
-      const time = date.getTime();
-      const now = Date.now();
-      return time < now - DAY_MS * parseInt(daystr.slice(1), 10);
-    };
-  } else {
-    return date => {
-      const time = date.getTime();
-      const now = Date.now();
-      return time > now && time < now + DAY_MS * parseInt(daystr, 10);
-    };
+    case "<": // At least 3 days ago
+      return date => {
+        const time = date.getTime();
+        const now = Date.now();
+        return time < now - DAY_MS * parseFloat(daystr.slice(1));
+      };
+    default:
+      // within n days
+      return date => {
+        const time = date.getTime();
+        const now = Date.now();
+        return time > now && time < now + DAY_MS * parseFloat(daystr);
+      };
   }
 }
 export function newTagsFilter(tagsGroup: string[]): TagsFilter {

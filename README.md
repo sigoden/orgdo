@@ -1,20 +1,13 @@
 # Orgdo
 
-## Features
-
-- server/clint architecture
-- manage todo and agenda
-- full features task properties
-
 ## Model
 
 - tasks
 
-  id, name, desc, tags
-  priority(critical, high, low)
+  id, name, describe, tags
+  priority(medium, high, low)
   time-related(start, started, complete, completed)
-  misc(est)
-  status(todo, todo-call, todo-outdate, doing, doing-outdate, done, cancel)
+  status(todo, doing, done, cancel)
 
 - settings
 

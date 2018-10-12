@@ -1,7 +1,7 @@
 import * as yargs from "yargs";
 import Cli, { ListOptions } from "../../Cli";
 import Client, { print } from "../../Client";
-import * as render from "../../render";
+import * as render from "../../task-render";
 
 export const command = "list";
 export const describe = "List tasks";
