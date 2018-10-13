@@ -228,12 +228,15 @@ function dateformat(date: Date): string {
 }
 
 function shortTimeStr(timestr: string): string {
-  const nowstr = dateformat(new Date()).slice(9);
-  let i = 0;
-  for (; i < nowstr.length; i++) {
-    if (nowstr[i] !== timestr[i]) {
-      break;
-    }
+  const date = new Date(timestr);
+  const now = new Date();
+  if (date.getFullYear() === now.getFullYear()) {
+    timestr = timestr.slice(5);
+  } else {
+    return timestr.slice(2);
   }
-  return timestr.slice(i + 1);
+  if (date.getMonth() === now.getMonth() && date.getDate() === now.getDate()) {
+    return timestr.slice(6);
+  }
+  return timestr;
 }

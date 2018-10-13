@@ -44,14 +44,13 @@ export default class Cli {
       );
     }
     const filter = taskFilters.combine(filters);
-    const tasks = await this.client.listTasks(filter);
-    return tasks;
+    return this.client.listTasks(filter);
   }
 
   public async add(options: AddOptions) {
     const { tags, describe, priority, start, complete, name } = options;
     const id = await this.client.incId("taskId");
-    const task = Task.fromRaw({
+    const task = Task.load({
       id,
       tags,
       describe,

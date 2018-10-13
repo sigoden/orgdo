@@ -8,21 +8,21 @@ import * as fs from "fs";
 let client: Client;
 let cli: Cli;
 
-const store = path.resolve(__dirname, ".orgdo.test.json");
+const dataFile = path.resolve(__dirname, ".orgdo.test.json");
 
 async function prepare() {
   try {
-    fs.unlinkSync(store);
+    fs.unlinkSync(dataFile);
   } catch (err) {}
   client = await Client.init({
-    store
+    dataFile
   });
   cli = new Cli(client);
 }
 
 afterAll(() => {
   try {
-    fs.unlinkSync(store);
+    fs.unlinkSync(dataFile);
   } catch (err) {}
 });
 

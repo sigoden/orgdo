@@ -1,7 +1,12 @@
 import * as yargs from "yargs";
 
 import Client, { print } from "../../Client";
-import Clock, { UpdateOptions, ListOptions } from "../../Clock";
+import Clock, {
+  UpdateOptions,
+  ListOptions,
+  secondToTimeString
+} from "../../Clock";
+import * as _ from "lodash";
 
 export const command = "clock";
 export const describe = "Manage tomato clocks";
@@ -33,10 +38,21 @@ export function builder(cmd: yargs.Argv) {
     })
     .command({
       command: "status",
-      describe: "View clock config and status",
+      describe: "View current clock",
       handler: (options: yargs.Arguments) => {
         Client.init().then(client => {
-          new Clock(client).status().catch(err => print(err.message));
+          new Clock(client)
+            .status()
+            .then(data => {
+              if (data.state.type !== "idle") {
+                print(
+                  `${data.state.type}: ${secondToTimeString(data.state.time)}`
+                );
+              } else {
+                print(`No clock is running, done ${data.index} clocks today`);
+              }
+            })
+            .catch(err => print(err.message));
         });
       }
     })
@@ -45,6 +61,10 @@ export function builder(cmd: yargs.Argv) {
       describe: "Update clock settings",
       builder: (subcmd: yargs.Argv) => {
         return subcmd
+          .option("work-time", {
+            describe: "Work time of clock in minute",
+            type: "number"
+          })
           .option("long-break-time", {
             describe: "Long break time of clock in minute",
             type: "number"
@@ -58,9 +78,25 @@ export function builder(cmd: yargs.Argv) {
             type: "number"
           });
       },
-      handler: (options: UpdateOptions) => {
+      handler: (options: yargs.Argv) => {
         Client.init().then(client => {
-          new Clock(client).update(options).catch(err => print(err.message));
+          new Clock(client)
+            .update(<UpdateOptions> (
+              _.pick(options, [
+                "long-break-time",
+                "short-break-time",
+                "long-break-count",
+                "work-time"
+              ])
+            ))
+            .then(settings => {
+              print(`long-break-time: ${settings["long-break-time"]}
+short-break-time: ${settings["short-break-time"]}
+long-break-count: ${settings["long-break-count"]}
+work-time: ${settings["work-time"]}
+`);
+            })
+            .catch(err => print(err.message));
         });
       }
     })
@@ -69,17 +105,12 @@ export function builder(cmd: yargs.Argv) {
       describe: "List clocks",
       builder: (subcmd: yargs.Argv) => {
         return subcmd
-          .option("aggregate", {
-            describe: "Aggregate clocks data",
-            choices: ["month", "week", "day"],
-            type: "string"
-          })
           .option("after", {
-            describe: "List clock more recent than a specific date.",
+            describe: "List clock more recent than a specific date. yyyy-MM-dd",
             type: "string"
           })
           .option("before", {
-            describe: "List clock older than a specific date.",
+            describe: "List clock older than a specific date. yyyy-MM-dd",
             type: "string"
           });
       },

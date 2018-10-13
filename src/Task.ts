@@ -2,29 +2,16 @@ import * as _ from "lodash";
 import * as timestring from "timestring";
 import * as os from "os";
 
-interface RawData extends UpdateData {
-  tags?: string[];
-  id: number;
-  name: string;
-}
-
-interface UpdateData {
-  describe?: string;
-  priority?: TaskPriority;
-  start?: string;
-  complete?: string;
-}
-
 export type TaskPriority = "high" | "medium" | "low";
 export type TaskStatus = "todo" | "doing" | "done" | "cancel";
 
 const RE_TIME = /^\d{2,4}-\d{2}-\d{2}( \d{2}:\d{2}(:\d{2})?)?$/;
 
 export default class Task {
-  public static fromRaw(raw: RawData) {
-    const task = new Task(raw.id, raw.name);
-    task.tags = raw.tags ? formatTags(raw.tags) : [];
-    task.update(raw);
+  public static load(model: Model) {
+    const task = new Task(model.id, model.name);
+    task.tags = model.tags ? formatTags(model.tags) : [];
+    task.update(model);
     return task;
   }
   public static sort(t1: Task, t2: Task) {
@@ -38,7 +25,9 @@ export default class Task {
   }
   public static fromJSON(data: any) {
     ["start", "started", "complete", "completed"].forEach(key => {
-      if (data[key]) { data[key] = new Date(data[key]); }
+      if (data[key]) {
+        data[key] = new Date(data[key]);
+      }
     });
     const task: Task = Object.assign(new Task(data.id, data.name), data);
     return task;
@@ -130,4 +119,17 @@ function priorityToInt(priority: TaskPriority): number {
     default:
       return 0;
   }
+}
+
+interface Model extends UpdateData {
+  tags?: string[];
+  id: number;
+  name: string;
+}
+
+interface UpdateData {
+  describe?: string;
+  priority?: TaskPriority;
+  start?: string;
+  complete?: string;
 }

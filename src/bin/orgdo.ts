@@ -1,8 +1,9 @@
 import * as yargs from "yargs";
+import * as path from "path";
 
 yargs
   .commandDir("cmds", {
-    extensions: ["js", "ts"]
+    extensions: path.extname(__filename) === ".ts" ? ["ts", "js"] : ["js"]
   })
   .demandCommand(
     1,
