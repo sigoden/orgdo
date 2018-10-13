@@ -1,7 +1,8 @@
 import * as ipc from "node-ipc";
 import { StartClockArgs } from "./Clock";
-import Client from "./Client";
+import Client, { PID_FILE } from "./Client";
 import * as notifier from "node-notifier";
+import * as fs from "fs";
 
 ipc.config.appspace = "orgdo.";
 ipc.config.id = "server";
@@ -25,15 +26,13 @@ function calcuateRemain(minutes: number) {
   };
 }
 
-let client: Client;
+try {
+  fs.writeFileSync(PID_FILE, process.pid);
+} catch (err) {}
 
-Client.init({ dataFile }).then(ret => {
-  client = ret;
-  ipc.server.start();
-  process.on("SIGINT", () => {
-    client.clearIpcPid();
-    process.exit();
-  });
+process.on("SIGINT", () => {
+  fs.unlinkSync(PID_FILE);
+  process.exit();
 });
 
 ipc.serve(() => {
@@ -44,26 +43,34 @@ ipc.serve(() => {
     });
   });
   ipc.server.on("clock.start", (data: StartClockArgs, socket) => {
-    clockSession.state = "running";
     clockSession.getRemain = calcuateRemain(data.workTime);
-    notify(`You timer is up, take a ${data.next} break`);
+    clockSession.state = "running";
     clockSession.timer = setTimeout(() => {
+      clockSession.getRemain = calcuateRemain(data.breakTime);
       clockSession.state =
         data.next === "long" ? "longbreaking" : "shortbreaking";
-      notify(`You timer is up, start a new clock`);
+      notify(`You timer is up, take a ${data.next} break`);
+      notify(`${data.workTime} minutes of work done. You deserve a break!`);
       clockSession.timer = setTimeout(() => {
-        clockSession.getRemain = calcuateRemain(data.breakTime);
+        clockSession.state = "idle";
+        notify(`Your break of ${data.breakTime} minutes is over.`);
       }, data.breakTime * MINUTE_TO_MS);
-      client.addClock({ taskId: data.taskId, time: data.workTime });
+      Client.init({ dataFile }).then(client => {
+        client.addClock({ taskId: data.taskId, time: data.workTime });
+      });
     }, data.workTime * MINUTE_TO_MS);
     ipc.server.emit(socket, "response", {});
   });
   ipc.server.on("clock.stop", (data, socket) => {
     clockSession.state = "idle";
-    clearTimeout(clockSession.timer);
+    if (clockSession.timer) {
+      clearTimeout(clockSession.timer);
+    }
     ipc.server.emit(socket, "response", {});
   });
 });
+
+ipc.server.start();
 
 function notify(msg) {
   notifier.notify({

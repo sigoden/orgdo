@@ -1,6 +1,6 @@
 import * as yargs from "yargs";
 import Cli, { ListOptions } from "../../Cli";
-import Client, { print } from "../../Client";
+import Client, { print, printErrorAndExit } from "../../Client";
 import * as render from "../../task-render";
 
 export const command = "list";
@@ -74,6 +74,6 @@ export function handler(options: ListOptions) {
         }
         print(ret);
       })
-      .catch(err => print(err.message));
+      .catch(err => printErrorAndExit(err));
   });
 }

@@ -5,6 +5,7 @@ import * as os from "os";
 import * as mkdirp from "mkdirp";
 import * as ipc from "./ipc";
 import getPath from "platform-folders";
+import * as fs from "fs";
 import * as path from "path";
 
 const DEFAULT_DB = {
@@ -14,7 +15,6 @@ const DEFAULT_DB = {
   clockId: 0,
   crons: [],
   cronId: 0,
-  ipcPid: 0,
   clockSettings: {
     "work-time": "25",
     "long-break-time": "30",
@@ -24,7 +24,9 @@ const DEFAULT_DB = {
 };
 
 export const DATA_DIR = path.resolve(getPath("userData"), "orgdo");
-export const DATA_FILE = path.resolve(DATA_DIR, ".orgdo.json");
+export const DATA_FILE = path.resolve(DATA_DIR, "orgdo.json");
+export const PID_FILE = path.resolve(DATA_DIR, "orgdo.pid");
+
 mkdirp.sync(DATA_DIR);
 
 export interface Options {
@@ -33,12 +35,13 @@ export interface Options {
 
 import Task from "./Task";
 import { TaskFilter } from "./task-filters";
-import Clock, {
+import {
   ClockSettings,
   ClockState,
   ClockFilter,
   StartClockArgs,
-  newClockModel
+  newClockModel,
+  ClockModel
 } from "./Clock";
 
 export default class Client {
@@ -137,7 +140,7 @@ export default class Client {
 
   public async listClocks(filter: ClockFilter) {
     const clocks = await this.db.get("clocks").value();
-    return <Clock[]> (
+    return <ClockModel[]> (
       clocks.map(clock => newClockModel(clock)).filter(clock => filter(clock))
     );
   }
@@ -145,26 +148,24 @@ export default class Client {
   public async addClock(data: any) {
     const id = await this.incId("clockId");
     await this.db
-      .get("tasks")
+      .get("clocks")
       .push({ id, createdAt: new Date(), ...data })
       .write();
   }
 
-  public async clearIpcPid() {
-    await this.db.set("ipcPid", 0).write();
-  }
-
-  private async isIPCServerRunning() {
-    const pid = this.db.get("ipcPid").value();
-    return pid && ipc.isServerRunning(pid);
-  }
-
   private async runIPCServer() {
-    const isRunning = await this.isIPCServerRunning();
-    if (!isRunning) {
-      const cp = await ipc.runServer(this.options.dataFile);
-      await this.db.set("ipcPid", cp.pid).write();
+    if (!this.isIPCServerRunning()) {
+      await ipc.runServer(this.options.dataFile);
     }
+  }
+  private isIPCServerRunning() {
+    let pid;
+    try {
+      pid = fs.readFileSync(PID_FILE, "utf8");
+    } catch (err) {
+      return false;
+    }
+    return ipc.isServerRunning(parseInt(pid, 10));
   }
 }
 
@@ -173,4 +174,13 @@ export function print(str: string, eol = true) {
   if (eol) {
     process.stdout.write(os.EOL);
   }
+}
+
+export function printErrorAndExit(err: any, exitCode = 1) {
+  if (err instanceof Error) {
+    print(err.message);
+  } else {
+    print(err.toString());
+  }
+  process.exit(1);
 }

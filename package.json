@@ -16,7 +16,6 @@
   "dependencies": {
     "@types/lowdb": "^1.0.6",
     "chalk": "^2.4.1",
-    "dateformat": "^3.0.3",
     "lodash": "^4.17.11",
     "lowdb": "^1.0.0",
     "mkdirp": "^0.5.1",

@@ -20,7 +20,24 @@ export async function runServer(dataFile: string) {
     }
   );
   child.unref();
-  return child;
+  return new Promise<cp.ChildProcess>((resolve, reject) => {
+    // ensure server running
+    ipc.connectTo(SERVER_ID, () => {
+      const server = ipc.of[SERVER_ID];
+      let retry = 5;
+      server.on("error", err => {
+        retry--;
+        if (retry === 0) {
+          ipc.disconnect(SERVER_ID);
+          reject(err);
+        }
+      });
+      server.on("connect", () => {
+        ipc.disconnect(SERVER_ID);
+        resolve(child);
+      });
+    });
+  });
 }
 
 export function isServerRunning(pid: number) {

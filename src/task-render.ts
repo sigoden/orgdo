@@ -36,7 +36,7 @@ function renderSummaryTable(table: TasksSumaryTable): string {
       key.length,
       ...Object.keys(table).map(k => table[k][key].toString().length)
     );
-    titleLine += `| ${paddingRight(key, size)} `;
+    titleLine += `| ${paddingLeft(key, size)} `;
     dashLine += `| ${"-".repeat(size)} `;
     return size;
   });
@@ -48,7 +48,7 @@ function renderSummaryTable(table: TasksSumaryTable): string {
   groupNames.forEach(name => {
     const row = table[name];
     const line = columns.reduce((a, c, i) => {
-      a += `| ${paddingRight(row[c].toString(), sizes[i])} `;
+      a += `| ${paddingLeft(row[c].toString(), sizes[i])} `;
       return a;
     }, "");
     arr.push(line + "|");
@@ -206,7 +206,7 @@ interface TasksSumaryTableColumn {
   percent: string;
 }
 
-function paddingRight(str: string, size: number) {
+function paddingLeft(str: string, size: number) {
   return (str + " ".repeat(size)).slice(0, size);
 }
 

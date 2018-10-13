@@ -1,6 +1,6 @@
 import * as yargs from "yargs";
 import Cli, { AddOptions } from "../../Cli";
-import Client, { print } from "../../Client";
+import Client, { printErrorAndExit } from "../../Client";
 
 export const command = "add <name>";
 export const describe = "Add task";
@@ -33,6 +33,6 @@ export function builder(cmd: yargs.Argv) {
 }
 export function handler(options: AddOptions) {
   Client.init().then(client => {
-    new Cli(client).add(options).catch(err => print(err.message));
+    new Cli(client).add(options).catch(err => printErrorAndExit(err));
   });
 }

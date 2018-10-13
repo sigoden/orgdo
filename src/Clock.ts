@@ -35,23 +35,19 @@ export default class Clock {
     return this.client.getClockSettings();
   }
   public async list(options: ListOptions) {
-    if (!options.after && !options.before) {
+    if (!options.after) {
       const date = new Date();
       date.setDate(date.getDate() - 1);
       options.after = date.toString();
     }
-    const afterFilter = newDateFilter(options.after, "after", v => v > 0);
-    let filter: ClockFilter;
-    if (options.before) {
-      filter = (clock: ClockModel) => {
-        return (
-          afterFilter(clock) &&
-          newDateFilter(options.before, "before", v => v < 0)(clock)
-        );
-      };
-    } else {
-      filter = afterFilter;
+    if (!options.before) {
+      options.before = new Date().toString();
     }
+    const afterFilter = newDateFilter(options.after, "after", v => v > 0);
+    const beforeFilter = newDateFilter(options.before, "before", v => v < 0);
+    const filter = (clock: ClockModel) => {
+      return afterFilter(clock) && beforeFilter(clock);
+    };
     return this.client.listClocks(filter);
   }
   private async getClockStartArtgs(id?: number) {
@@ -104,9 +100,17 @@ export interface ClockState {
 export type ClockFilter = (clock: ClockModel) => boolean;
 
 function todayFilter(clock: ClockModel) {
-  const date = new Date();
-  date.setHours(4);
+  const date = clearTimeInfo(new Date());
   return clock.createdAt.getTime() - date.getTime() > 0;
+}
+
+export function clearTimeInfo(date: Date) {
+  const ret = new Date(date.toString());
+  ret.setHours(0);
+  ret.setMinutes(0);
+  ret.setSeconds(0);
+  ret.setMilliseconds(0);
+  return ret;
 }
 
 function newDateFilter(

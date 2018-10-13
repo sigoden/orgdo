@@ -1,6 +1,6 @@
 import * as yargs from "yargs";
 import Cli, { IdOptions } from "../../Cli";
-import Client, { print } from "../../Client";
+import Client, { printErrorAndExit } from "../../Client";
 
 export const command = "rm <id>";
 export const describe = "Remove task";
@@ -9,6 +9,6 @@ export function builder(cmd: yargs.Argv) {
 }
 export function handler(options: IdOptions) {
   Client.init().then(client => {
-    new Cli(client).remove(options).catch(err => print(err.message));
+    new Cli(client).remove(options).catch(err => printErrorAndExit(err));
   });
 }

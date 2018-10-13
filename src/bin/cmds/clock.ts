@@ -1,12 +1,13 @@
 import * as yargs from "yargs";
 
-import Client, { print } from "../../Client";
+import Client, { print, printErrorAndExit } from "../../Client";
 import Clock, {
   UpdateOptions,
   ListOptions,
   secondToTimeString
 } from "../../Clock";
 import * as _ from "lodash";
+import * as render from "../../clock-render";
 
 export const command = "clock";
 export const describe = "Manage tomato clocks";
@@ -23,7 +24,9 @@ export function builder(cmd: yargs.Argv) {
       },
       handler: (options: yargs.Arguments) => {
         Client.init().then(client => {
-          new Clock(client).start(options.id).catch(err => print(err.message));
+          new Clock(client)
+            .start(options.id)
+            .catch(err => printErrorAndExit(err));
         });
       }
     })
@@ -32,7 +35,7 @@ export function builder(cmd: yargs.Argv) {
       describe: "Stop clock",
       handler: (options: yargs.Arguments) => {
         Client.init().then(client => {
-          new Clock(client).stop().catch(err => print(err.message));
+          new Clock(client).stop().catch(err => printErrorAndExit(err));
         });
       }
     })
@@ -52,7 +55,7 @@ export function builder(cmd: yargs.Argv) {
                 print(`No clock is running, done ${data.index} clocks today`);
               }
             })
-            .catch(err => print(err.message));
+            .catch(err => printErrorAndExit(err));
         });
       }
     })
@@ -93,16 +96,15 @@ export function builder(cmd: yargs.Argv) {
               print(`long-break-time: ${settings["long-break-time"]}
 short-break-time: ${settings["short-break-time"]}
 long-break-count: ${settings["long-break-count"]}
-work-time: ${settings["work-time"]}
-`);
+work-time: ${settings["work-time"]}`);
             })
-            .catch(err => print(err.message));
+            .catch(err => printErrorAndExit(err));
         });
       }
     })
     .command({
-      command: "list",
-      describe: "List clocks",
+      command: "stat",
+      describe: "Show clocks statistic",
       builder: (subcmd: yargs.Argv) => {
         return subcmd
           .option("after", {
@@ -116,7 +118,17 @@ work-time: ${settings["work-time"]}
       },
       handler: (options: ListOptions) => {
         Client.init().then(client => {
-          new Clock(client).list(options).catch(err => print(err.message));
+          new Clock(client)
+            .list(options)
+            .then(clocks => {
+              const ret = render.renderClocks(
+                new Date(options.after),
+                new Date(options.before),
+                clocks
+              );
+              print(ret);
+            })
+            .catch(err => printErrorAndExit(err));
         });
       }
     })
