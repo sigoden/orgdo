@@ -18,19 +18,19 @@
 [37m☐[39m  [37mTask have priority, supports low, medium, high[39m [44m[30m#5[39m[49m
 [90m   The lower prioriy, the farther backward[39m
 
-[37m☐[39m  [37mTask have kinds of status, included todo, doing, done, cancel[39m [42m[30m#6[39m[49m
+[37m☐[39m  [37mTask have kinds of status, included todo, doing, done, canceled[39m [42m[30m#6[39m[49m
 [90m   todo means task have not started[39m
 
-[33m❍[39m  [33mTask have kinds of status, included todo, doing, done, cancel[39m [42m[30m#7[39m[49m
+[33m❍[39m  [33mTask have kinds of status, included todo, doing, done, canceled[39m [42m[30m#7[39m[49m
 [90m   doing means task have started but have not completed[39m
    [35m$started(17-09-10 16:30)[39m
 
-[32m✔[39m  [32mTask have kinds of status, included todo, doing, done, cancel[39m [42m[30m#8[39m[49m
-[90m   done meas task have completed[39m
+[32m✔[39m  [32mTask have kinds of status, included todo, doing, done, canceled[39m [42m[30m#8[39m[49m
+[90m   done means task have been completed[39m
    [35m$started(17-09-10 16:30)[39m [35m$completed(17-09-13 00:32)[39m
 
-[31m✘[39m  [31mTask have kinds of status, included todo, doing, done, cancel[39m [42m[30m#9[39m[49m
-[90m   cancel meas task have canceled[39m
+[31m✘[39m  [31mTask have kinds of status, included todo, doing, done, canceled[39m [42m[30m#9[39m[49m
+[90m   canceled means task have been canceled[39m
    [35m$completed(17-09-15 00:32)[39m
 
 [37m☐[39m  [37mAdd task with expired start and complete time[39m [42m[30m#10[39m[49m

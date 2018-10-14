@@ -21,7 +21,7 @@ export function builder(cmd: yargs.Argv) {
     })
     .option("status", {
       describe: "Filter based on status",
-      choices: ["todo", "doing", "done", "cancel"]
+      choices: ["todo", "doing", "done", "canceled"]
     })
     .option("name", {
       describe: "Filter based on name regexp",

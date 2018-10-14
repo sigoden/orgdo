@@ -78,7 +78,7 @@ export default class Cli {
 
   public async cancel(options: IdOptions) {
     const task = await this.client.getTask(options.id);
-    task.updateStatus("cancel");
+    task.updateStatus("canceled");
     task.completed = new Date();
     await this.client.updateTask(task);
     return task;

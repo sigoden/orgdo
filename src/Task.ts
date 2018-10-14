@@ -3,7 +3,7 @@ import * as timestring from "timestring";
 import * as os from "os";
 
 export type TaskPriority = "high" | "medium" | "low";
-export type TaskStatus = "todo" | "doing" | "done" | "cancel";
+export type TaskStatus = "todo" | "doing" | "done" | "canceled";
 
 const RE_TIME = /^\d{2,4}-\d{2}-\d{2}( \d{2}:\d{2}(:\d{2})?)?$/;
 
@@ -75,7 +75,7 @@ export default class Task {
   }
 
   public updateStatus(status: TaskStatus) {
-    if (this.status === "done" || this.status === "cancel") {
+    if (this.status === "done" || this.status === "canceled") {
       throw new Error("Cannot update finished task");
     }
     this.status = status;

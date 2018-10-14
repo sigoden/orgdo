@@ -80,7 +80,7 @@ describe("crud task", () => {
   });
   test("cancel task", async () => {
     const task = await cli.add({
-      name: "A task to cancel"
+      name: "A task to be canceled"
     });
     expect(task.status).toBe("todo");
     expect(task.id).toBe(2);
@@ -124,7 +124,7 @@ describe("list task", () => {
     expect(tasks.map(t => t.id)).toEqual([5, 11]);
   });
   test("filter by status", async () => {
-    const tasks = await cli.list({ status: "cancel" });
+    const tasks = await cli.list({ status: "canceled" });
     expect(tasks.map(t => t.id)).toEqual([9]);
   });
   test("filter by name", async () => {
@@ -194,7 +194,7 @@ describe("list task by times", () => {
         id: 9,
         name: "Task",
         completed: dayOffset(-2),
-        status: "cancel"
+        status: "canceled"
       }
     ].map(task => Object.assign({ priority: "medium", tags: [] }, task));
     const state = client.db.getState();

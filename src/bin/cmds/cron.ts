@@ -52,7 +52,7 @@ export function builder(cmd: yargs.Argv) {
       }
     })
     .command({
-      command: "rm <id>",
+      command: ["rm <id>", "remove"],
       describe: "Remove cron job",
       builder: (subcmd: yargs.Argv) => {
         return subcmd.positional("id", {

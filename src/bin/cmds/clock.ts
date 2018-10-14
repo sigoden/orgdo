@@ -31,7 +31,7 @@ export function builder(cmd: yargs.Argv) {
       }
     })
     .command({
-      command: "stop",
+      command: ["stop", "abort"],
       describe: "Stop clock",
       handler: (options: yargs.Arguments) => {
         Client.init().then(client => {

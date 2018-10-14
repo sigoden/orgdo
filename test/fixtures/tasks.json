@@ -39,7 +39,7 @@
   },
   {
     "id": 6,
-    "name": "Task have kinds of status, included todo, doing, done, cancel",
+    "name": "Task have kinds of status, included todo, doing, done, canceled",
     "describe": "todo means task have not started",
     "status": "todo",
     "priority": "medium",
@@ -47,7 +47,7 @@
   },
   {
     "id": 7,
-    "name": "Task have kinds of status, included todo, doing, done, cancel",
+    "name": "Task have kinds of status, included todo, doing, done, canceled",
     "describe": "doing means task have started but have not completed",
     "status": "doing",
     "priority": "medium",
@@ -56,8 +56,8 @@
   },
   {
     "id": 8,
-    "name": "Task have kinds of status, included todo, doing, done, cancel",
-    "describe": "done meas task have completed",
+    "name": "Task have kinds of status, included todo, doing, done, canceled",
+    "describe": "done means task have been completed",
     "status": "done",
     "priority": "medium",
     "started": "2017-09-10T08:30:00.000Z",
@@ -66,10 +66,10 @@
   },
   {
     "id": 9,
-    "name": "Task have kinds of status, included todo, doing, done, cancel",
-    "describe": "cancel meas task have canceled",
+    "name": "Task have kinds of status, included todo, doing, done, canceled",
+    "describe": "canceled means task have been canceled",
     "priority": "medium",
-    "status": "cancel",
+    "status": "canceled",
     "completed": "2017-09-14T16:32:00.000Z",
     "tags": []
   },

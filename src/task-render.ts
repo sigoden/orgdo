@@ -3,7 +3,7 @@ import chalk from "chalk";
 import * as os from "os";
 
 const COLORS = {
-  cancel: chalk.red,
+  canceled: chalk.red,
   done: chalk.green,
   todo: chalk.white,
   describe: chalk.gray,
@@ -113,7 +113,7 @@ function renderSymbol(task: Task): string {
     case "done":
       symbol = "✔";
       break;
-    case "cancel":
+    case "canceled":
       symbol = "✘";
       break;
     case "doing":
@@ -169,7 +169,7 @@ function newTaskSummeryTable(tasks: Task[]) {
   }
   Object.keys(table).forEach(key => {
     const row = table[key];
-    const finishedNum = row.cancel + row.done;
+    const finishedNum = row.canceled + row.done;
     const unfinishedNum = row.todo + row.doing;
     const allNum = unfinishedNum + finishedNum;
     row.all = allNum;
@@ -185,7 +185,7 @@ function newTaskSummeryTableRow(name: string): TasksSumaryTableColumn {
     todo: 0,
     doing: 0,
     done: 0,
-    cancel: 0,
+    canceled: 0,
     all: 0,
     percent: "0"
   };
@@ -201,7 +201,7 @@ interface TasksSumaryTableColumn {
   todo: number;
   doing: number;
   done: number;
-  cancel: number;
+  canceled: number;
   all: number;
   percent: string;
 }
