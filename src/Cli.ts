@@ -119,8 +119,8 @@ export interface ListOptions {
   started?: string;
   complete?: string;
   completed?: string;
-  "with-statistic"?: string;
-  "only-statistic"?: string;
+  "with-stat"?: string;
+  "only-stat"?: string;
 }
 
 export interface AddOptions {

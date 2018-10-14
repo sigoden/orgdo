@@ -12,8 +12,8 @@ orgdo list --start 3
 orgdo list --started >-3
 orgdo list --complete >3
 orgdo list --completed -3
-orgdo list --with-statistic
-orgdo list --only-statistic
+orgdo list --with-stat
+orgdo list --only-stat
 ```
 
 ```

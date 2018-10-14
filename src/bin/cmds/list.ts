@@ -43,11 +43,11 @@ export function builder(cmd: yargs.Argv) {
       describe: "Filter base on completed time of task",
       type: "string"
     })
-    .option("with-statistic", {
+    .option("with-stat", {
       describe: "Show static of tasks",
       type: "boolean"
     })
-    .option("only-statistic", {
+    .option("only-stat", {
       describe: "Show static of tasks only, hidden tasks list",
       type: "boolean"
     });
@@ -66,10 +66,10 @@ export function handler(options: ListOptions) {
       .list(options)
       .then(tasks => {
         let ret = "";
-        if (!options["only-statistic"]) {
+        if (!options["only-stat"]) {
           ret += render.renderTasks(tasks);
         }
-        if (options["with-statistic"] || options["only-statistic"]) {
+        if (options["with-stat"] || options["only-stat"]) {
           ret += render.renderTasksStatistic(tasks);
         }
         print(ret);
