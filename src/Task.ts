@@ -8,10 +8,10 @@ export type TaskStatus = "todo" | "doing" | "done" | "cancel";
 const RE_TIME = /^\d{2,4}-\d{2}-\d{2}( \d{2}:\d{2}(:\d{2})?)?$/;
 
 export default class Task {
-  public static load(model: Model) {
-    const task = new Task(model.id, model.name);
-    task.tags = model.tags ? formatTags(model.tags) : [];
-    task.update(model);
+  public static create(data: CreateData) {
+    const task = new Task(data.id, data.name);
+    task.tags = data.tags ? formatTags(data.tags) : [];
+    task.update(data);
     return task;
   }
   public static sort(t1: Task, t2: Task) {
@@ -121,7 +121,7 @@ function priorityToInt(priority: TaskPriority): number {
   }
 }
 
-interface Model extends UpdateData {
+interface CreateData extends UpdateData {
   tags?: string[];
   id: number;
   name: string;

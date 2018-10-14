@@ -50,7 +50,7 @@ export default class Cli {
   public async add(options: AddOptions) {
     const { tags, describe, priority, start, complete, name } = options;
     const id = await this.client.incId("taskId");
-    const task = Task.load({
+    const task = Task.create({
       id,
       tags,
       describe,

@@ -43,6 +43,7 @@ import {
   newClockModel,
   ClockModel
 } from "./Clock";
+import { CronModel } from "./CronJob";
 
 export default class Client {
   public static async init(options: Options = { dataFile: DATA_FILE }) {
@@ -151,6 +152,52 @@ export default class Client {
       .get("clocks")
       .push({ id, createdAt: new Date(), ...data })
       .write();
+  }
+
+  public async addCron(data: CronModel) {
+    await this.db
+      .get("crons")
+      .push(data)
+      .write();
+    await ipc.call("cron.add", data);
+  }
+
+  public async getCron(id: number) {
+    const data = this.db
+      .get("crons")
+      .find(cron => cron.id === id)
+      .value();
+    if (!data) {
+      throw new Error(`Cron ${id} not found`);
+    }
+    return <CronModel> data;
+  }
+
+  public async updateCron(cron: CronModel) {
+    await this.db
+      .get("crons")
+      .find({ id: cron.id })
+      .assign(cron)
+      .write();
+    await ipc.call("cron.update", cron);
+  }
+
+  public async removeCron(id: number) {
+    try {
+      await this.getCron(id);
+    } catch (err) {
+      return;
+    }
+    await this.db
+      .get("crons")
+      .remove({ id })
+      .write();
+    await ipc.call("cron.remove", { id });
+  }
+
+  public async listCrons() {
+    const crons = await this.db.get("crons").value();
+    return <CronModel[]> crons;
   }
 
   private async runIPCServer() {
