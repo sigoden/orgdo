@@ -3,29 +3,8 @@ import * as FileAsync from "lowdb/adapters/FileAsync";
 import * as _ from "lodash";
 import * as os from "os";
 import * as mkdirp from "mkdirp";
-import * as ipc from "./ipc";
-import getPath from "platform-folders";
-import * as fs from "fs";
-import * as path from "path";
 
-const DEFAULT_DB = {
-  tasks: [],
-  taskId: 0,
-  clocks: [],
-  clockId: 0,
-  crons: [],
-  cronId: 0,
-  clockSettings: {
-    "work-time": "25",
-    "long-break-time": "30",
-    "short-break-time": "10",
-    "long-break-count": "4"
-  }
-};
-
-export const DATA_DIR = path.resolve(getPath("userData"), "orgdo");
-export const DATA_FILE = path.resolve(DATA_DIR, "orgdo.json");
-export const PID_FILE = path.resolve(DATA_DIR, "orgdo.pid");
+import { DATA_DIR, DATA_FILE, DEFAULT_DB } from "./constants";
 
 mkdirp.sync(DATA_DIR);
 
@@ -35,6 +14,7 @@ export interface Options {
 
 import Task from "./Task";
 import { TaskFilter } from "./task-filters";
+import IPC from "./IPC";
 import {
   ClockSettings,
   ClockState,
@@ -58,10 +38,10 @@ export default class Client {
   }
 
   public db: low.LowdbAsync<any>;
-  private options: Options;
+  private ipc: IPC;
 
   constructor(options: Options) {
-    this.options = options;
+    this.ipc = new IPC(options.dataFile);
   }
 
   public async incId(name: string) {
@@ -112,14 +92,14 @@ export default class Client {
   }
 
   public async startClock(args: StartClockArgs) {
-    return ipc.call("clock.start", args);
+    return this.ipc.exec("clock.start", args);
   }
 
   public async stopClock() {
-    if (!this.isIPCServerRunning()) {
+    if (!this.ipc.isRunning()) {
       return;
     }
-    return ipc.call("clock.stop");
+    return this.ipc.exec("clock.stop");
   }
 
   public async getClockSettings() {
@@ -134,8 +114,7 @@ export default class Client {
   }
 
   public async getClockState() {
-    await this.runIPCServer();
-    const data = await ipc.call("clock.state");
+    const data = await this.ipc.exec("clock.state");
     return <ClockState> data;
   }
 
@@ -159,7 +138,7 @@ export default class Client {
       .get("crons")
       .push(data)
       .write();
-    await ipc.call("cron.add", data);
+    await this.ipc.exec("cron.add", data);
   }
 
   public async getCron(id: number) {
@@ -179,7 +158,7 @@ export default class Client {
       .find({ id: cron.id })
       .assign(cron)
       .write();
-    await ipc.call("cron.update", cron);
+    await this.ipc.exec("cron.update", cron);
   }
 
   public async removeCron(id: number) {
@@ -192,27 +171,12 @@ export default class Client {
       .get("crons")
       .remove({ id })
       .write();
-    await ipc.call("cron.remove", { id });
+    await this.ipc.exec("cron.remove", { id });
   }
 
   public async listCrons() {
     const crons = await this.db.get("crons").value();
     return <CronModel[]> crons;
-  }
-
-  private async runIPCServer() {
-    if (!this.isIPCServerRunning()) {
-      await ipc.runServer(this.options.dataFile);
-    }
-  }
-  private isIPCServerRunning() {
-    let pid;
-    try {
-      pid = fs.readFileSync(PID_FILE, "utf8");
-    } catch (err) {
-      return false;
-    }
-    return ipc.isServerRunning(parseInt(pid, 10));
   }
 }
 

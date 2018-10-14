@@ -1,14 +1,15 @@
 import * as ipc from "node-ipc";
 import { StartClockArgs } from "./Clock";
-import Client, { PID_FILE } from "./Client";
+import Client from "./Client";
 import * as notifier from "node-notifier";
 import * as fs from "fs";
 import { CronJob } from "cron";
 import { CronModel } from "./CronJob";
-import Task from "Task";
+import Task from "./Task";
+import { PID_FILE, IPC_APP_SPACE, IPC_SERVER_ID } from "./constants";
 
-ipc.config.appspace = "orgdo.";
-ipc.config.id = "server";
+ipc.config.appspace = IPC_APP_SPACE;
+ipc.config.id = IPC_SERVER_ID;
 ipc.config.silent = true;
 
 const DATA_FILE = process.argv[2];
