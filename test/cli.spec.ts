@@ -8,7 +8,7 @@ import * as fs from "fs";
 let client: Client;
 let cli: Cli;
 
-const dataFile = path.resolve(__dirname, ".orgdo.test.json");
+const dataFile = path.resolve(__dirname, "orgdo.cli.json");
 
 async function prepare() {
   try {

@@ -16,7 +16,7 @@ export function renderClocks(start: Date, end: Date, clocks: ClockModel[]) {
   let line = "";
   aggArr.forEach((v, i) => {
     const isSun = i % 7 === 0;
-    const isEmpty = i < indexOfStart || v > indexOfEnd;
+    const isEmpty = i < indexOfStart || i > indexOfEnd;
     let value = paddingRight(isEmpty ? "" : String(v), isSun ? 3 : 4);
     if (i === indexOfStart || i === indexOfEnd) {
       value = MARK(value);
@@ -46,7 +46,7 @@ function firstOfWeek(date: Date) {
 }
 
 function calWeeksNum(begin: Date, target: Date) {
-  return Math.ceil(dayOffset(begin, target) / 7);
+  return Math.ceil((dayOffset(begin, target) + 1) / 7);
 }
 
 function dayOffset(begin: Date, target: Date) {

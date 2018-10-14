@@ -23,7 +23,7 @@ import {
   newClockModel,
   ClockModel
 } from "./Clock";
-import { CronModel } from "./CronJob";
+import { CronModel } from "./Cronjob";
 
 export default class Client {
   public static async init(options: Options = { dataFile: DATA_FILE }) {
@@ -45,8 +45,8 @@ export default class Client {
   }
 
   public async incId(name: string) {
-    const id = this.db.get("taskId").value() + 1;
-    await this.db.set("taskId", id).write();
+    const id = this.db.get(name).value() + 1;
+    await this.db.set(name, id).write();
     return <number> id;
   }
 
@@ -99,6 +99,10 @@ export default class Client {
     if (!this.ipc.isRunning()) {
       return;
     }
+    const state = await this.getClockState();
+    if (state.type === "idle") {
+      return;
+    }
     return this.ipc.exec("clock.stop");
   }
 
@@ -125,12 +129,14 @@ export default class Client {
     );
   }
 
-  public async addClock(data: any) {
+  public async addClock(data: { time: number; taskId?: number }) {
     const id = await this.incId("clockId");
+    const clock: ClockModel = { id, createdAt: new Date(), ...data };
     await this.db
       .get("clocks")
-      .push({ id, createdAt: new Date(), ...data })
+      .push(clock)
       .write();
+    return clock;
   }
 
   public async addCron(data: CronModel) {

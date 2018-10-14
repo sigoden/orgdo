@@ -14,9 +14,9 @@ export const DEFAULT_DB = {
   crons: [],
   cronId: 0,
   clockSettings: {
-    "work-time": "25",
-    "long-break-time": "30",
-    "short-break-time": "10",
-    "long-break-count": "4"
+    "work-time": 25,
+    "long-break-time": 30,
+    "short-break-time": 10,
+    "long-break-count": 4
   }
 };

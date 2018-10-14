@@ -19,10 +19,6 @@ export default class Clock {
     await this.client.startClock(args);
   }
   public async stop() {
-    const state = await this.client.getClockState();
-    if (state.type === "idle") {
-      return;
-    }
     await this.client.stopClock();
   }
   public async status() {
@@ -41,10 +37,12 @@ export default class Clock {
       options.after = date.toString();
     }
     if (!options.before) {
-      options.before = new Date().toString();
+      const date = new Date();
+      date.setSeconds(date.getSeconds() + 1);
+      options.before = date.toString();
     }
     const afterFilter = newDateFilter(options.after, "after", v => v > 0);
-    const beforeFilter = newDateFilter(options.before, "before", v => v < 0);
+    const beforeFilter = newDateFilter(options.before, "before", v => v <= 0);
     const filter = (clock: ClockModel) => {
       return afterFilter(clock) && beforeFilter(clock);
     };

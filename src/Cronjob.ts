@@ -1,14 +1,14 @@
 import Client from "./Client";
 import { CronTime } from "cron";
 
-export default class CronJob {
+export default class Cron {
   private client: Client;
   constructor(client: Client) {
     this.client = client;
   }
 
   public async add(options: AddOptions) {
-    const _ = new CronTime(options.cron);
+    verifyCron(options.cron);
     const id = await this.client.incId("taskId");
     options.task = options.task || `Task ${id}`;
     const model: CronModel = {
@@ -22,7 +22,7 @@ export default class CronJob {
   public async update(options: UpdateOptions) {
     const model = await this.client.getCron(options.id);
     if (options.cron) {
-      const _ = new CronTime(options.cron);
+      verifyCron(options.cron);
       model.cron = options.cron;
     }
     if (options.task) {
@@ -54,4 +54,12 @@ export interface CronModel {
   id: number;
   cron: string;
   task: string;
+}
+
+function verifyCron(cron: string) {
+  try {
+    const _ = new CronTime(cron);
+  } catch (err) {
+    throw new Error(`Invalid cron pattern ${cron}, ${err.message}`);
+  }
 }

@@ -1,7 +1,7 @@
 import * as yargs from "yargs";
 
 import Client, { print, printErrorAndExit } from "../../Client";
-import CronJob, { AddOptions, UpdateOptions, CronModel } from "../../CronJob";
+import Cron, { AddOptions, UpdateOptions, CronModel } from "../../Cronjob";
 
 export const command = "cron";
 export const describe = "Manage cronjobs";
@@ -17,13 +17,13 @@ export function builder(cmd: yargs.Argv) {
             type: "string"
           })
           .positional("cron", {
-            describe: "Cronjob pattern",
+            describe: "Cron pattern",
             type: "string"
           });
       },
       handler: (options: AddOptions) => {
         Client.init().then(client => {
-          new CronJob(client).add(options).catch(err => printErrorAndExit(err));
+          new Cron(client).add(options).catch(err => printErrorAndExit(err));
         });
       }
     })
@@ -37,7 +37,7 @@ export function builder(cmd: yargs.Argv) {
             type: "string"
           })
           .option("cron", {
-            describe: "Cronjob pattern",
+            describe: "Cron pattern",
             type: "string"
           })
           .positional("id", {
@@ -47,7 +47,7 @@ export function builder(cmd: yargs.Argv) {
       },
       handler: (options: UpdateOptions) => {
         Client.init().then(client => {
-          new CronJob(client).update(options).catch(err => printErrorAndExit(err));
+          new Cron(client).update(options).catch(err => printErrorAndExit(err));
         });
       }
     })
@@ -62,7 +62,7 @@ export function builder(cmd: yargs.Argv) {
       },
       handler: (options: yargs.Arguments) => {
         Client.init().then(client => {
-          new CronJob(client)
+          new Cron(client)
             .remove(options.id)
             .catch(err => printErrorAndExit(err));
         });
@@ -74,14 +74,14 @@ export function builder(cmd: yargs.Argv) {
       builder: {},
       handler: (options: yargs.Arguments) => {
         Client.init().then(client => {
-          new CronJob(client)
+          new Cron(client)
             .list()
             .then(models => {
               const cronColumnWidth = Math.max(
                 ...models.map(model => model.cron.length)
               );
               models.forEach(model =>
-                print(renderCronJob(model, cronColumnWidth))
+                print(renderCron(model, cronColumnWidth))
               );
             })
             .catch(err => printErrorAndExit(err));
@@ -99,7 +99,7 @@ function paddingRight(str: string, size: number) {
   return (" ".repeat(size) + str).slice(-1 * size);
 }
 
-function renderCronJob(model: CronModel, cronColumnWidth: number) {
+function renderCron(model: CronModel, cronColumnWidth: number) {
   return `${paddingRight(String(model.id), 3)}\t${paddingRight(
     model.cron,
     cronColumnWidth

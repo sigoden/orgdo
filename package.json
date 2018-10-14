@@ -1,7 +1,7 @@
 {
   "name": "orgdo-cli",
   "version": "1.0.0",
-  "description": "> cli tools for orgdo",
+  "description": "Command-line tool to manage the Todo lists",
   "bin": "dist/bin/orgdo.js",
   "scripts": {
     "lint": "tslint -p tsconfig.json --fix",

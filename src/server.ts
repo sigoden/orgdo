@@ -4,7 +4,7 @@ import Client from "./Client";
 import * as notifier from "node-notifier";
 import * as fs from "fs";
 import { CronJob } from "cron";
-import { CronModel } from "./CronJob";
+import { CronModel } from "./Cronjob";
 import Task from "./Task";
 import { PID_FILE, IPC_APP_SPACE, IPC_SERVER_ID } from "./constants";
 
@@ -28,6 +28,11 @@ try {
 } catch (err) {}
 
 ipc.serve(() => {
+  Client.init({ dataFile: DATA_FILE }).then(client => {
+    client.listCrons().then(crons => {
+      crons.forEach(model => addCronJob(model));
+    });
+  });
   ipc.server.on("clock.state", (data, socket) => {
     ipc.server.emit(socket, "response", {
       type: clockSession.state,
@@ -106,6 +111,7 @@ function addCronJob(model: CronModel) {
     });
   });
   cronSession[model.id] = job;
+  job.start();
 }
 
 function removeCronJob(id: number) {

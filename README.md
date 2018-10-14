@@ -1,5 +1,7 @@
 # Orgdo
 
+> Command-line tool to manage the Todo lists.
+
 ## Model
 
 - tasks
