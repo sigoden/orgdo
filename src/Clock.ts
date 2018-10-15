@@ -1,4 +1,5 @@
 import Client from "./Client";
+import { prependZero, clearTimeInfo } from "./utits";
 
 export default class Clock {
   private client: Client;
@@ -32,8 +33,7 @@ export default class Clock {
   }
   public async list(options: ListOptions) {
     if (!options.after) {
-      const date = new Date();
-      date.setDate(date.getDate() - 1);
+      const date = clearTimeInfo(new Date());
       options.after = date.toString();
     }
     if (!options.before) {
@@ -51,19 +51,17 @@ export default class Clock {
   private async getClockStartArtgs(id?: number) {
     const clocks = await this.client.listClocks(todayFilter);
     const settings = await this.client.getClockSettings();
-    const isLong =
-      clocks.length === 0 ||
-      (clocks.length + 1) % settings["long-break-count"] === 0;
+    const isLong = (clocks.length + 1) % settings["long-break-count"] === 0;
     const args: StartClockArgs = isLong
       ? {
           workTime: settings["work-time"],
-          next: "short",
-          breakTime: settings["short-break-time"]
+          next: "long",
+          breakTime: settings["long-break-time"]
         }
       : {
           workTime: settings["work-time"],
-          next: "long",
-          breakTime: settings["long-break-time"]
+          next: "short",
+          breakTime: settings["short-break-time"]
         };
     if (id) {
       args.taskId = id;
@@ -80,7 +78,7 @@ export interface ListOptions {
 export function secondToTimeString(time: number) {
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
-  return `${minutes}:${seconds}`;
+  return `${minutes}:${prependZero("" + seconds, 2)}`;
 }
 
 export interface ClockSettings {
@@ -100,15 +98,6 @@ export type ClockFilter = (clock: ClockModel) => boolean;
 function todayFilter(clock: ClockModel) {
   const date = clearTimeInfo(new Date());
   return clock.createdAt.getTime() - date.getTime() > 0;
-}
-
-export function clearTimeInfo(date: Date) {
-  const ret = new Date(date.toString());
-  ret.setHours(0);
-  ret.setMinutes(0);
-  ret.setSeconds(0);
-  ret.setMilliseconds(0);
-  return ret;
 }
 
 function newDateFilter(

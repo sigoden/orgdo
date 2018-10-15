@@ -42,7 +42,7 @@ export function handler(options: UpdateOptions) {
     new Cli(client)
       .update(options)
       .then(task => {
-        print(`Update task ${task.id}`);
+        print(`Update task ${task.id}.`);
       })
       .catch(err => printErrorAndExit(err));
   });

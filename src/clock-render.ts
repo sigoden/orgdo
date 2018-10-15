@@ -1,4 +1,5 @@
-import { ClockModel, clearTimeInfo } from "./Clock";
+import { ClockModel } from "./Clock";
+import { clearTimeInfo } from "./utits";
 import chalk from "chalk";
 import * as os from "os";
 

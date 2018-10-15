@@ -12,7 +12,7 @@ export function handler(options: IdOptions) {
     new Cli(client)
       .cancel(options)
       .then(task => {
-        print(`Cancel task ${task.id}`);
+        print(`Cancel task ${task.id}.`);
       })
       .catch(err => printErrorAndExit(err));
   });

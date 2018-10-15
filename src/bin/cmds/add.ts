@@ -35,7 +35,7 @@ export function handler(options: AddOptions) {
   Client.init().then(client => {
     new Cli(client)
       .add(options)
-      .then(task => print(`Add task ${task.id}`))
+      .then(task => print(`Add task ${task.id}.`))
       .catch(err => printErrorAndExit(err));
   });
 }

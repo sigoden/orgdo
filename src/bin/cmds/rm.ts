@@ -12,7 +12,7 @@ export function handler(options: IdOptions) {
     new Cli(client)
       .remove(options)
       .then(() => {
-        print(`Remove task ${options.id}`);
+        print(`Remove task ${options.id}.`);
       })
       .catch(err => printErrorAndExit(err));
   });

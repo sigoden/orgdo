@@ -27,7 +27,7 @@ export function builder(cmd: yargs.Argv) {
           new Clock(client)
             .start(options.id)
             .then(() => {
-              print(`Start clock`);
+              print(`Start clock.`);
             })
             .catch(err => printErrorAndExit(err));
         });
@@ -41,7 +41,7 @@ export function builder(cmd: yargs.Argv) {
           new Clock(client)
             .stop()
             .then(() => {
-              print(`Stop clock`);
+              print(`Stop clock.`);
             })
             .catch(err => printErrorAndExit(err));
         });
@@ -57,10 +57,10 @@ export function builder(cmd: yargs.Argv) {
             .then(data => {
               if (data.state.type !== "idle") {
                 print(
-                  `${data.state.type}: ${secondToTimeString(data.state.time)}`
+                  `Clock is ${data.state.type}, ${secondToTimeString(data.state.time)} remained`
                 );
               } else {
-                print(`No clock is running, done ${data.index} clocks today`);
+                print(`No running clock, done ${data.index} clocks today.`);
               }
             })
             .catch(err => printErrorAndExit(err));

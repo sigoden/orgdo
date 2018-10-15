@@ -2,6 +2,7 @@ import * as yargs from "yargs";
 
 import Client, { print, printErrorAndExit } from "../../Client";
 import Cron, { AddOptions, UpdateOptions, CronModel } from "../../Cronjob";
+import { paddingRight } from "../../utits";
 
 export const command = "cron";
 export const describe = "Manage cronjobs";
@@ -26,7 +27,7 @@ export function builder(cmd: yargs.Argv) {
           new Cron(client)
             .add(options)
             .then(cron => {
-              print(`Add cron ${cron.id}`);
+              print(`Add cron ${cron.id}.`);
             })
             .catch(err => printErrorAndExit(err));
         });
@@ -55,7 +56,7 @@ export function builder(cmd: yargs.Argv) {
           new Cron(client)
             .update(options)
             .then(cron => {
-              print(`Update cron ${cron.id}`);
+              print(`Update cron ${cron.id}.`);
             })
             .catch(err => printErrorAndExit(err));
         });
@@ -75,7 +76,7 @@ export function builder(cmd: yargs.Argv) {
           new Cron(client)
             .remove(options.id)
             .then(() => {
-              print(`Remove cron ${options.id}`);
+              print(`Remove cron ${options.id}.`);
             })
             .catch(err => printErrorAndExit(err));
         });
@@ -91,7 +92,7 @@ export function builder(cmd: yargs.Argv) {
             .list()
             .then(models => {
               if (models.length === 0) {
-                print("No crons");
+                print("No crons.");
                 return;
               }
               const cronColumnWidth = Math.max(
@@ -111,10 +112,6 @@ export function builder(cmd: yargs.Argv) {
     );
 }
 export function handler(argv: yargs.Arguments) {}
-
-function paddingRight(str: string, size: number) {
-  return (" ".repeat(size) + str).slice(-1 * size);
-}
 
 function renderCron(model: CronModel, cronColumnWidth: number) {
   return `${paddingRight(String(model.id), 3)}\t${paddingRight(

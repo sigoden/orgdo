@@ -12,7 +12,7 @@ export function handler(options: IdOptions) {
     new Cli(client)
       .start(options)
       .then(task => {
-        print(`Start task ${task.id}`);
+        print(`Start task ${task.id}.`);
       })
       .catch(err => printErrorAndExit(err));
   });

@@ -2,6 +2,8 @@ import Task from "Task";
 import chalk from "chalk";
 import * as os from "os";
 
+import { paddingLeft, shortTimeStr, dateFormat } from "./utits";
+
 const COLORS = {
   canceled: chalk.red,
   done: chalk.green,
@@ -124,7 +126,7 @@ function renderSymbol(task: Task): string {
 }
 
 function renderTimeTag(kind: string, time: Date) {
-  return COLORS.tag(`$${kind}(${shortTimeStr(dateformat(time))})`);
+  return COLORS.tag(`$${kind}(${shortTimeStr(dateFormat(time))})`);
 }
 
 function renderTimes(task: Task) {
@@ -204,39 +206,4 @@ interface TasksSumaryTableColumn {
   canceled: number;
   all: number;
   percent: string;
-}
-
-function paddingLeft(str: string, size: number) {
-  return (str + " ".repeat(size)).slice(0, size);
-}
-
-function prependZero(str: string, size: number) {
-  return ("0".repeat(size) + str).slice(-1 * size);
-}
-
-function dateformat(date: Date): string {
-  const year = "" + date.getFullYear();
-  const month = prependZero("" + (date.getMonth() + 1), 2);
-  const day = prependZero("" + date.getDate(), 2);
-  const hour = prependZero("" + date.getHours(), 2);
-  const minute = prependZero("" + date.getMinutes(), 2);
-  const ymd = `${year}-${month}-${day}`;
-  if (hour === "00" && minute === "00") {
-    return ymd;
-  }
-  return ymd + ` ${hour}:${minute}`;
-}
-
-function shortTimeStr(timestr: string): string {
-  const date = new Date(timestr);
-  const now = new Date();
-  if (date.getFullYear() === now.getFullYear()) {
-    timestr = timestr.slice(5);
-  } else {
-    return timestr.slice(2);
-  }
-  if (date.getMonth() === now.getMonth() && date.getDate() === now.getDate()) {
-    return timestr.slice(6);
-  }
-  return timestr;
 }
