@@ -26,6 +26,9 @@ export function builder(cmd: yargs.Argv) {
         Client.init().then(client => {
           new Clock(client)
             .start(options.id)
+            .then(() => {
+              print(`Start clock`);
+            })
             .catch(err => printErrorAndExit(err));
         });
       }
@@ -35,7 +38,12 @@ export function builder(cmd: yargs.Argv) {
       describe: "Stop clock",
       handler: (options: yargs.Arguments) => {
         Client.init().then(client => {
-          new Clock(client).stop().catch(err => printErrorAndExit(err));
+          new Clock(client)
+            .stop()
+            .then(() => {
+              print(`Stop clock`);
+            })
+            .catch(err => printErrorAndExit(err));
         });
       }
     })

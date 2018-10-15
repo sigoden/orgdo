@@ -1,6 +1,6 @@
 {
   "name": "orgdo",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Command-line tool to manage the Todo lists",
   "bin": "dist/bin/orgdo.js",
   "scripts": {

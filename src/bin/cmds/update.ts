@@ -1,6 +1,6 @@
 import * as yargs from "yargs";
 import Cli, { UpdateOptions } from "../../Cli";
-import Client, { printErrorAndExit } from "../../Client";
+import Client, { print, printErrorAndExit } from "../../Client";
 
 export const command = "update <id>";
 export const describe = "Update task";
@@ -39,6 +39,11 @@ export function builder(cmd: yargs.Argv) {
 
 export function handler(options: UpdateOptions) {
   Client.init().then(client => {
-    new Cli(client).update(options).catch(err => printErrorAndExit(err));
+    new Cli(client)
+      .update(options)
+      .then(task => {
+        print(`Update task ${task.id}`);
+      })
+      .catch(err => printErrorAndExit(err));
   });
 }

@@ -23,7 +23,12 @@ export function builder(cmd: yargs.Argv) {
       },
       handler: (options: AddOptions) => {
         Client.init().then(client => {
-          new Cron(client).add(options).catch(err => printErrorAndExit(err));
+          new Cron(client)
+            .add(options)
+            .then(cron => {
+              print(`Add cron ${cron.id}`);
+            })
+            .catch(err => printErrorAndExit(err));
         });
       }
     })
@@ -47,7 +52,12 @@ export function builder(cmd: yargs.Argv) {
       },
       handler: (options: UpdateOptions) => {
         Client.init().then(client => {
-          new Cron(client).update(options).catch(err => printErrorAndExit(err));
+          new Cron(client)
+            .update(options)
+            .then(cron => {
+              print(`Update cron ${cron.id}`);
+            })
+            .catch(err => printErrorAndExit(err));
         });
       }
     })
@@ -64,6 +74,9 @@ export function builder(cmd: yargs.Argv) {
         Client.init().then(client => {
           new Cron(client)
             .remove(options.id)
+            .then(() => {
+              print(`Remove cron ${options.id}`);
+            })
             .catch(err => printErrorAndExit(err));
         });
       }
