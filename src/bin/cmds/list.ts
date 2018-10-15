@@ -3,7 +3,7 @@ import Cli, { ListOptions } from "../../Cli";
 import Client, { print, printErrorAndExit } from "../../Client";
 import * as render from "../../task-render";
 
-export const command = "list";
+export const command = ["list", "ls"];
 export const describe = "List tasks";
 export function builder(cmd: yargs.Argv) {
   return cmd
@@ -65,6 +65,10 @@ export function handler(options: ListOptions) {
     new Cli(client)
       .list(options)
       .then(tasks => {
+        if (tasks.length === 0) {
+          print("No tasks.");
+          return;
+        }
         let ret = "";
         if (!options["only-stat"]) {
           ret += render.renderTasks(tasks);

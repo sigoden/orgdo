@@ -142,10 +142,10 @@ orgdo clock set --long-break-time 20
 orgdo clock set --long-break-count 4
 ```
 
-### Get clock statistic
+### List clocks
 
 ```
-orgdo clock stat
+orgdo clock list
 ```
 
 ## Cron Commands

@@ -103,8 +103,8 @@ work-time: ${settings["work-time"]}`);
       }
     })
     .command({
-      command: "stat",
-      describe: "Show clocks statistic",
+      command: ["list", "ls"],
+      describe: "List clocks used everyday",
       builder: (subcmd: yargs.Argv) => {
         return subcmd
           .option("after", {
@@ -121,6 +121,10 @@ work-time: ${settings["work-time"]}`);
           new Clock(client)
             .list(options)
             .then(clocks => {
+              if (clocks.length === 0) {
+                print("No clocks.");
+                return;
+              }
               const ret = render.renderClocks(
                 new Date(options.after),
                 new Date(options.before),

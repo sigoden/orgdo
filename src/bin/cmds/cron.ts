@@ -69,7 +69,7 @@ export function builder(cmd: yargs.Argv) {
       }
     })
     .command({
-      command: "list",
+      command: ["list", "ls"],
       describe: "List cron jobs",
       builder: {},
       handler: (options: yargs.Arguments) => {
@@ -77,6 +77,10 @@ export function builder(cmd: yargs.Argv) {
           new Cron(client)
             .list()
             .then(models => {
+              if (models.length === 0) {
+                print("No crons");
+                return;
+              }
               const cronColumnWidth = Math.max(
                 ...models.map(model => model.cron.length)
               );
