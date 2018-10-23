@@ -46,8 +46,11 @@ ipc.serve(() => {
       clockSession.getRemain = remainGen(data.breakTime);
       clockSession.state =
         data.next === "long" ? "longbreaking" : "shortbreaking";
-      notify(`You timer is up, take a ${data.next} break`);
-      notify(`${data.workTime} minutes of work done. You deserve a break!`);
+      notify(
+        `You timer is up after worked ${data.workTime} minutes, take a ${
+          data.next
+        } break`
+      );
       clockSession.timer = setTimeout(() => {
         clockSession.state = "idle";
         notify(`Your break of ${data.breakTime} minutes is over.`);
