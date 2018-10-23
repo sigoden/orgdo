@@ -1,6 +1,7 @@
 import * as yargs from "yargs";
 import Cli, { UpdateOptions } from "../../Cli";
 import Client, { print, printErrorAndExit } from "../../Client";
+import { strToArr } from "../../utits";
 
 export const command = "update <id>";
 export const describe = "Update task";
@@ -38,7 +39,10 @@ export function builder(cmd: yargs.Argv) {
 }
 
 export function handler(options: UpdateOptions) {
+  strToArr(options, "add-tags");
+  strToArr(options, "remove-tags");
   Client.init().then(client => {
+    console.log(options);
     new Cli(client)
       .update(options)
       .then(task => {

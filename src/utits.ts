@@ -45,3 +45,9 @@ export function clearTimeInfo(date: Date) {
   ret.setMilliseconds(0);
   return ret;
 }
+
+export function strToArr(obj: any, key: string) {
+  if (obj[key] && typeof obj[key] === "string") {
+    obj[key] = [obj[key]];
+  }
+}

@@ -1,6 +1,7 @@
 import * as yargs from "yargs";
 import Cli, { ListOptions } from "../../Cli";
 import Client, { print, printErrorAndExit } from "../../Client";
+import { strToArr } from "../../utits";
 import * as render from "../../task-render";
 
 export const command = ["list", "ls"];
@@ -13,7 +14,7 @@ export function builder(cmd: yargs.Argv) {
     })
     .option("tags", {
       describe: "Filter based on tags",
-      type: "array"
+      type: "string"
     })
     .option("priority", {
       describe: "Filter based on priority",
@@ -54,6 +55,7 @@ export function builder(cmd: yargs.Argv) {
 }
 
 export function handler(options: ListOptions) {
+  strToArr(options, "tags");
   Client.init().then(client => {
     if (Object.keys(options).length === 2) {
       options = {
