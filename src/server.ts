@@ -40,6 +40,9 @@ ipc.serve(() => {
     });
   });
   ipc.server.on("clock.start", (data: StartClockArgs, socket) => {
+    if (clockSession.timer) {
+      clearTimeout(clockSession.timer);
+    }
     clockSession.getRemain = remainGen(data.workTime);
     clockSession.state = "running";
     clockSession.timer = setTimeout(() => {
