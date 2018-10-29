@@ -42,7 +42,6 @@ export function handler(options: UpdateOptions) {
   strToArr(options, "add-tags");
   strToArr(options, "remove-tags");
   Client.init().then(client => {
-    console.log(options);
     new Cli(client)
       .update(options)
       .then(task => {
