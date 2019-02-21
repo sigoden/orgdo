@@ -59,6 +59,9 @@ export default class Task {
     return this;
   }
   public update(data: UpdateData): this {
+    if (data.name) {
+      this.name = data.name;
+    }
     if (data.describe) {
       this.describe = data.describe;
     }
@@ -128,6 +131,7 @@ interface CreateData extends UpdateData {
 }
 
 interface UpdateData {
+  name?: string;
   describe?: string;
   priority?: TaskPriority;
   start?: string;
